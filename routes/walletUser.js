@@ -36,7 +36,7 @@ router.post('/', function(req, res, next){
 
     var responseMessage = new ResponseMessage();
 
-    WalletUser.addWalletUser(req.body, function(err, count){
+    WalletUser.registry(req.body, function(err, count){
 
         if(err)
         {

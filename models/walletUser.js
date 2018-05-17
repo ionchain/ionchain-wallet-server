@@ -24,12 +24,23 @@ var WalletUser = {
             "wallet_user " +
             "where mobile=?", [mobile], callback);
     },
+    registry: function (WalletUser, callback) {
+        var currentTime = moment().format('YYYY-MM-DD HH:mm:ss');
+        var data = db.query("" +
+            "insert into " +
+            "wallet_user" +
+            "(id, mobile, password, create_time, update_time, invited_code) " +
+            " values(?,?,?,?,?,?)",
+            [uuid.v1(), WalletUser.mobile, WalletUser.password, currentTime, currentTime, WalletUser.invited_code],
+            callback);
+        return data;
+    },
     addWalletUser: function (WalletUser, callback) {
         var currentTime = moment().format('YYYY-MM-DD hh:mm:ss');
         var data = db.query("" +
             "insert into " +
             "wallet_user" +
-            "(id,username, mobile, password, create_time, " +
+            "(id, username, mobile, password, create_time, " +
             "update_time,invite_code,invited_code, source) " +
             " values(?,?,?,?,?,?,?,?,?)",
             [uuid.v1(), WalletUser.username, WalletUser.mobile, WalletUser.password, currentTime,
