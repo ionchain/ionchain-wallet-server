@@ -1,0 +1,10 @@
+const Status = {
+    SUCCESS:0,
+    EXCEPTION_QUERY:1001,
+    EXCEPTION_UPDATE:1002,
+    EXCEPTION_ADD:1003,
+    EXCEPTION_DELETE:1004
+
+}
+
+module.exports = Status;
