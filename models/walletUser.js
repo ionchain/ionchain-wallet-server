@@ -1,4 +1,6 @@
 var db = require('../dbconnection');
+var uuid = require('node-uuid');
+var moment = require('moment');
 
 var WalletUser = {
     getAllWalletUser: function (callback) {
@@ -23,14 +25,15 @@ var WalletUser = {
                     "where mobile=?",[mobile], callback);
     },
     addWalletUser: function (WalletUser, callback) {
+        var currentTime = moment().format('YYYY-MM-DD hh:mm:ss');
         var data = db.query("" +
             "insert into " +
                 "wallet_user" +
                     "(id,username, mobile, password, create_time, " +
                     "update_time,invite_code,invited_code, source) " +
                 " values(?,?,?,?,?,?,?,?,?)",
-            [WalletUser.id,WalletUser.username,WalletUser.mobile,WalletUser.password,WalletUser.create_time,
-                WalletUser.update_time,WalletUser.invite_code,WalletUser.invited_code,WalletUser.source],
+            [uuid.v1(), WalletUser.username, WalletUser.mobile, WalletUser.password, currentTime,
+                currentTime, WalletUser.invite_code, WalletUser.invited_code, WalletUser.source],
             callback);
         return data;
     },

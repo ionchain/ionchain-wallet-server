@@ -33,16 +33,20 @@ router.get('/:id?', function(req, res, next){
 });
 
 router.post('/', function(req, res, next){
-    console.log("req:" + req);
+
+    var responseMessage = new ResponseMessage();
+
     WalletUser.addWalletUser(req.body, function(err, count){
-        console.log("err: " + err);
-        console.log("count:" + count);
+
         if(err)
         {
-            res.json(err);
-        } else {
-            res.json(req.body);//or return count for 1 & 0
+            responseMessage.exception(STATUS.EXCEPTION_ADD, err);
         }
+        else
+        {
+            responseMessage.success(req.body, null);
+        }
+        res.json(responseMessage);
     });
 });
 
