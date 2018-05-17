@@ -6,7 +6,7 @@ var crypto=require('crypto');
 module.exports = {
     verify:function(request, response, next){
         var responseMessage = new ResponseMessage();
-        responseMessage = responseMessage.exception(STATUS.EXCEPTION_UNAUTHORIZED,null);
+        responseMessage = responseMessage.exception(STATUS.EXCEPTION_UNAUTHORIZED,'不合法的访问！');
 
         var appkey = request.header('appkey');
         var timestamp = request.header('timestamp');
