@@ -21,7 +21,7 @@ function ResponseMessage() {
     };
     this.exception = function (code,ext) {
         this.code = code;
-        this.msg = '操作异常';
+        this.msg = '操作失败';
         this.ext = ext;
         return this;
     }

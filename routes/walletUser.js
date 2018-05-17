@@ -87,7 +87,6 @@ router.put('/:id',function(req,res,next){
     WalletUser.updateWalletUser(req.params.id, req.body, function(err, rows){
         if(err)
         {
-            res.json(err);
             responseMessage.exception(STATUS.EXCEPTION_UPDATE, err);
         }
         else
