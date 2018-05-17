@@ -51,40 +51,50 @@ router.post('/', function(req, res, next){
 });
 
 
- router.post('/:id', function(req, res, next){
+/* router.post('/:id', function(req, res, next){
+     var responseMessage = new ResponseMessage();
+
      WalletUser.deleteAll(req.body,function(err,count){
          if(err) {
-            res.json(err);
+             responseMessage.exception(STATUS.EXCEPTION_DELETE, err);
          } else {
-             res.json(count);
+             responseMessage.success(count, null);
          }
+         return responseMessage;
      });
-});
+});*/
 
 
-router.delete('/:id',function(req,res,next){
+router.delete('/:id',function(req, res, next){
+
+    var responseMessage = new ResponseMessage();
     WalletUser.deleteWalletUserById(req.params.id,function(err,count){
         if(err)
         {
-            res.json(err);
+            responseMessage.exception(STATUS.EXCEPTION_DELETE, err);
         } else {
-            res.json(count);
+            responseMessage.success(count, null);
         }
+        res.json(responseMessage);
     });
 });
 
 
 router.put('/:id',function(req,res,next){
 
+    var responseMessage = new ResponseMessage();
+
     WalletUser.updateWalletUser(req.params.id, req.body, function(err, rows){
         if(err)
         {
             res.json(err);
+            responseMessage.exception(STATUS.EXCEPTION_UPDATE, err);
         }
         else
         {
-            res.json(rows);
+            responseMessage.success(rows, null);
         }
+        res.json(responseMessage);
     });
 });
 
