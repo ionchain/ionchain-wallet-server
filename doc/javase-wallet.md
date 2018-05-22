@@ -22,7 +22,7 @@ Android:
 
 step 1: 获得web3j支持
 
-    HttpService httpService = new HttpService("http://127.0.0.1:7545/");
+    HttpService httpService = new HttpService("https://ropsten.infura.io/JOEnl84Gm76oX0RMUrJB");
     web3 = Web3j.build(httpService);
     Web3ClientVersion web3ClientVersion = web3.web3ClientVersion().sendAsync().get();
     String clientVersion = web3ClientVersion.getWeb3ClientVersion();
