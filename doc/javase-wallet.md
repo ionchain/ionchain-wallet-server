@@ -2,6 +2,23 @@
 
 how to build a ethereum wallet via org.web3j.core 
 
+#### Maven Dependency
+Java 8:
+
+    <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>core</artifactId>
+        <version>3.4.0</version>
+    </dependency>
+    
+Android:
+
+    <dependency>
+        <groupId>org.web3j</groupId>
+        <artifactId>core</artifactId>
+        <version>3.3.1-android</version>
+    </dependency>
+
 
 step 1: 获得web3j支持
 
