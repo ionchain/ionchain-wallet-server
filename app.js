@@ -4,15 +4,23 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var config = require('./config/config');
 var indexRouter = require('./routes/index');
 var Tasks = require('./routes/Tasks');
 var WalletUser = require('./routes/walletUser');
+var WalletSms = require('./routes/walletSms');
+
+
 var signature = require('./models/SignatureVerfy');
 
 var app = express();
 
 app.all('/*', function(request, response, next){
-  signature.verify(request, response, next);
+  if(config.signatureFlag){
+      signature.verify(request, response, next);
+  } else {
+      next();
+  }
 });
 
 
@@ -28,7 +36,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', WalletUser);
-app.use('/Tasks',Tasks);
+app.use('/tasks',Tasks);
+app.use('/sms',WalletSms);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

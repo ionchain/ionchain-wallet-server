@@ -9,12 +9,15 @@
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
     "debug": "~2.6.9",
+    "ethereumjs-wallet": "^0.6.0",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "jade": "~1.11.0",
     "moment": "^2.22.1",
     "morgan": "~1.9.0",
     "mysql": "^2.15.0",
-    "node-uuid": "^1.4.8"
+    "node-uuid": "^1.4.8",
+    "truffle-contract": "^3.0.5",
+    "web3": "^0.18.4"
   }
 }
