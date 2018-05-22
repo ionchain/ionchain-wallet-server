@@ -56,3 +56,33 @@ step 3-1: 通过密码与助记词获得钱包地址、公钥及私钥信息
      System.out.println(credentials.getAddress());
      System.out.println(credentials.getEcKeyPair().getPublicKey().toString(16));
      System.out.println(credentials.getEcKeyPair().getPrivateKey().toString(16));
+
+ step 4: 通过密码与keyStore文件进行转账操作 
+     
+    try {
+         web3 = Web3j.build(new HttpService("http://127.0.0.1:8545"));  
+         //通过密码和keystore文件获得钱包控制权
+         Credentials credentials = WalletUtils.loadCredentials("aaaaaaaa", "/Users/yves/ethereum/privateChain/keystore/UTC--2018-05-22T11-48-03.459005936Z--0df14334e094acc0197d52a415d799c2b8a3b04b");
+         //转账交易
+         TransactionReceipt transferReceipt = WalletTransfer.sendFunds(
+            web3, credentials,//web3指定网络、credentials指定转出钱包账户
+            "0x18f54aade5dde6ce3772b78b293d76c25d874f92",  // 将以太币发送到此账户
+            BigDecimal.ONE, Convert.Unit.ETHER)
+            .send();
+    }catch (Exception e){
+         e.printStackTrace();
+    }      
+    
+ step 5: 通过账户地址查询余额
+ 
+    web3 = Web3j.build(new HttpService("http://127.0.0.1:8545"));
+    Web3ClientVersion web3ClientVersion = web3.web3ClientVersion().sendAsync().get();
+ 
+    EthGetBalance ethGetBalance = web3
+                         .ethGetBalance("0x0df14334e094acc0197d52a415d799c2b8a3b04b", DefaultBlockParameterName.LATEST)
+                         .sendAsync()
+                         .get();        
+ 
+    BigInteger wei = ethGetBalance.getBalance();         
+    System.out.println("balance is :" + wei);
+      
