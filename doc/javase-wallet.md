@@ -2,6 +2,8 @@
 
 how to build a ethereum wallet via org.web3j.core 
 
+    可参考：https://github.com/ethjava/web3j-sample
+
 #### Maven Dependency
 Java 8:
 
