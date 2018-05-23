@@ -86,3 +86,7 @@ step 3-1: 通过密码与助记词获得钱包地址、公钥及私钥信息
     BigInteger wei = ethGetBalance.getBalance();         
     System.out.println("balance is :" + wei);
       
+ step 6: 代币信息查询、账户代币余额查询及钱包转账操作
+    
+    具体请查看当前目录的TokenClient.java文件
+   
