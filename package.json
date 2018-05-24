@@ -6,9 +6,13 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "assert": "^1.4.1",
+    "bs58check": "^2.1.1",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
+    "crypto": "^1.0.1",
     "debug": "~2.6.9",
+    "ethereumjs-util": "^5.2.0",
     "ethereumjs-wallet": "^0.6.0",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
@@ -17,7 +21,9 @@
     "morgan": "~1.9.0",
     "mysql": "^2.15.0",
     "node-uuid": "^1.4.8",
+    "safe-buffer": "^5.1.2",
     "truffle-contract": "^3.0.5",
+    "uuid": "^3.2.1",
     "web3": "^0.18.4"
   }
 }

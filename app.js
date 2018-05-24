@@ -6,9 +6,11 @@ var logger = require('morgan');
 
 var config = require('./config/config');
 var indexRouter = require('./routes/index');
-var Tasks = require('./routes/Tasks');
-var WalletUser = require('./routes/walletUser');
-var WalletSms = require('./routes/walletSms');
+var tasks = require('./routes/Tasks');
+var walletUser = require('./routes/walletUser');
+var walletSms = require('./routes/walletSms');
+var walletToken = require('./routes/walletToken');
+
 
 
 var signature = require('./models/SignatureVerfy');
@@ -35,9 +37,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', WalletUser);
-app.use('/tasks',Tasks);
-app.use('/sms',WalletSms);
+app.use('/users', walletUser);
+app.use('/tasks',tasks);
+app.use('/sms',walletSms);
+app.use('/token',walletToken);
+
 
 
 // catch 404 and forward to error handler

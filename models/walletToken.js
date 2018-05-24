@@ -23,7 +23,7 @@ var WalletToken = {
         var data = db.query("" +
             "insert into " +
                 "wallet_token(id, name, symbol, create_time, update_time, address, decimals) " +
-                " values(?,?,?,?,?,?)",
+                " values(?,?,?,?,?,?,?)",
             [uuid.v1(), WalletToken.name, WalletToken.symbol, currentTime, currentTime, WalletToken.address, WalletToken.decimals],
             callback);
         return data;
