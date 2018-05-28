@@ -87,8 +87,32 @@ step 3-1: 通过密码与助记词获得钱包地址、公钥及私钥信息
  
     BigInteger wei = ethGetBalance.getBalance();         
     System.out.println("balance is :" + wei);
+    
+    
+ step 6:通过私钥导入钱包；
+ 
+    /**
+      * 导入私钥
+      *
+      * @param privateKey 私钥
+      * @param password   密码
+      * @param directory  存储路径 默认测试网络WalletUtils.getTestnetKeyDirectory() 默认主网络 WalletUtils.getMainnetKeyDirectory()
+      */
+     private static void importPrivateKey(BigInteger privateKey, String password, String directory) {
+         ECKeyPair ecKeyPair = ECKeyPair.create(privateKey);
+         try {
+             String keystoreName = WalletUtils.generateWalletFile(password,
+                     ecKeyPair,
+                     new File(directory),
+                     true);
+             System.out.println("keystore name " + keystoreName);
+         } catch (CipherException | IOException e) {
+             e.printStackTrace();
+         }
+     }
+
       
- step 6: 代币信息查询、账户代币余额查询及钱包转账操作
+ step 7: 代币信息查询、账户代币余额查询及钱包转账操作
     
     具体请查看当前目录的TokenClient.java文件
    
