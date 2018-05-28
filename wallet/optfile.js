@@ -3,7 +3,6 @@ var fs = require('fs');
 module.exports = {
     readfileSync:function(path){
         var data = fs.readFileSync(path, 'utf-8');
-        console.log('同步读取文件方法执行完毕');
         return data;
     },
     readfile:function (path, recall) {
@@ -30,13 +29,11 @@ module.exports = {
             }
         });
     },
-    writeFile:function (path, data, recall) {
+    writeFile:function (path, data) {
         fs.writeFile(path, JSON.stringify(data), {flag:'w',encoding:'utf-8',mode:'0666'}, function (err) {
             if (err){
                 throw err;
             }
-            console.log('It\'s saved!')
-            recall('写文件成功');
         });
     },
     writeFileSync:function (path,data) {
