@@ -17,10 +17,27 @@ router.get('/:id?', function(req, res, next){
             res.json(responseMessage);
         });
     } else {
-        WalletUser.getAllWalletUser(function(err, rows){
+        var current_page = 1; //默认为1
+        var pageSize = 5; //一页条数
+        if (req.query.pageNumber) {
+            current_page = parseInt(req.query.pageNumber);
+        }
+        if (req.query.pageSize) {
+            pageSize = parseInt(req.query.pageSize);
+        }
+
+        var last_page = current_page - 1;
+        if (current_page <= 1) {
+            last_page = 1;
+        }
+        var next_page = current_page + 1;
+        console.info("current_page： "+ current_page);
+        console.info("pageSize： " + pageSize);
+        WalletUser.getAllWalletUser(pageSize, pageSize * (current_page - 1), function(err, rows){
             var responseMessage = new ResponseMessage();
             if(err)
             {
+                console.info(err);
                 responseMessage.exception(STATUS.EXCEPTION_QUERY, null);
             }
             else

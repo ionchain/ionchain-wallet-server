@@ -3,26 +3,28 @@ var uuid = require('node-uuid');
 var moment = require('moment');
 
 var WalletUser = {
-    getAllWalletUser: function (callback) {
-        return db.query("select * from wallet_user", callback);
+    getAllWalletUser: function (num, offset, callback) {
+        //console.info(num);
+        //console.info(offset);
+        return db.query("select * from wallet_user limit ? offset ?", [num, offset], callback);
     },
     getWalletUserById: function (id, callback) {
         return db.query("" +
             "select * from " +
-            "wallet_user " +
-            "where id=?", [id], callback);
+                "wallet_user " +
+                    "where id=?", [id], callback);
     },
     getWalletUserByUsername: function (username, callback) {
         return db.query("" +
             "select * from " +
-            "wallet_user " +
-            "where username=?", [username], callback);
+                "wallet_user " +
+                    "where username=?", [username], callback);
     },
     getWalletUserByMobile: function (mobile, callback) {
         return db.query("" +
             "select * from " +
-            "wallet_user " +
-            "where mobile=?", [mobile], callback);
+                "wallet_user " +
+                    "where mobile=?", [mobile], callback);
     },
     registry: function (WalletUser, callback) {
         var currentTime = moment().format('YYYY-MM-DD HH:mm:ss');

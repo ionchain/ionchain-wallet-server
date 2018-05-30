@@ -11,6 +11,7 @@ var walletUser = require('./routes/walletUser');
 var walletSms = require('./routes/walletSms');
 var walletToken = require('./routes/walletToken');
 var News = require('./routes/news');
+var article = require('./routes/article');
 
 
 
@@ -44,6 +45,7 @@ app.use('/tasks',tasks);
 app.use('/sms',walletSms);
 app.use('/token',walletToken);
 app.use('/news', News);
+app.use('/article', article);
 
 
 
