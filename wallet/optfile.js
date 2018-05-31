@@ -22,11 +22,10 @@ module.exports = {
         fs.readFile(path, 'binary', function (err,file) {
             if (err){
                 console.log(err);
-                return;
             } else {
                 response.write(file, 'binary');
-                response.end();
             }
+            response.end();
         });
     },
     writeFile:function (path, data) {

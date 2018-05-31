@@ -12,6 +12,8 @@ var walletSms = require('./routes/walletSms');
 var walletToken = require('./routes/walletToken');
 var News = require('./routes/news');
 var article = require('./routes/article');
+var image = require('./routes/image');
+
 
 
 
@@ -39,13 +41,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-//app.use('/', indexRouter);
+app.use('/', indexRouter);
 app.use('/users', walletUser);
 app.use('/tasks',tasks);
 app.use('/sms',walletSms);
 app.use('/token',walletToken);
 app.use('/news', News);
 app.use('/article', article);
+app.use('/jflyfox/bbs/ueditor/image', image);
+
 
 
 
