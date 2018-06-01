@@ -22,6 +22,7 @@ var signature = require('./models/SignatureVerfy');
 var app = express();
 
 app.all('/*', function(request, response, next){
+    //开启签名验证
   if(config.signatureFlag){
       signature.verify(request, response, next);
   } else {

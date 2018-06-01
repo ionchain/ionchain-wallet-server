@@ -12,7 +12,7 @@ router.get('/:id?', function(req, res, next){
             if(err) {
                 responseMessage.exception(STATUS.EXCEPTION_QUERY,null);
             } else {
-                responseMessage.success(rows,null);
+                responseMessage.success(rows, null);
             }
             res.json(responseMessage);
         });
