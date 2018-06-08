@@ -13,7 +13,8 @@ var walletToken = require('./routes/walletToken');
 var News = require('./routes/news');
 var article = require('./routes/article');
 var image = require('./routes/image');
-
+let user = require('./routes/user');
+let sms = require('./routes/sms');
 
 
 
@@ -50,7 +51,8 @@ app.use('/token',walletToken);
 app.use('/news', News);
 app.use('/article', article);
 app.use('/jflyfox/bbs/ueditor/image', image);
-
+app.use('/',user);
+app.use("/",sms);
 
 
 
@@ -69,6 +71,10 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.listen(3000,function () {
+    console.log("app listen on 3000");
+})
 
 
 module.exports = app;
