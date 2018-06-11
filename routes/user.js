@@ -5,6 +5,7 @@ let redis = require("../utils/redis");
 let constants = require("../utils/constants");
 let ResponseMessage = require('../models/ResponseMessage');
 let Status = require('../models/Status');
+let utils = require('utility');
 
 /**
  * Find user through telephone number
@@ -32,8 +33,9 @@ router.post("/user/login", (req, res) => {
     let tel = req.body.tel;
     let password = req.body.password;
     let responseMessage = new ResponseMessage();
-    userMapper.findByTelAndPassword(tel,password).then(rows=>{
+    userMapper.findByTelAndPassword(tel,utils.md5(password)).then(rows=>{
         if(rows && rows.length === 1){
+            delete rows[0]["password"];
             responseMessage.success(rows[0],null);
             res.json(responseMessage);
         }else{
@@ -112,6 +114,11 @@ router.post("/user",function (req,res) {
                 }
                 //用户注册(将用户名默认设置为手机号)
                 user.username = user.tel;
+                user.password = utils.md5(user.password);
+                //匹配mysql邀请码字段
+                user.invite_code = user.inviteCode;
+                user.usertype = 3;//前台用户
+                delete user["inviteCode"];
                 userMapper.save(user).then(id=>{
                     responseMessage.success(null,"注册成功!");
                     res.json(responseMessage);
