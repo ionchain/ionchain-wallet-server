@@ -68,30 +68,29 @@ router.get("/user",function (req,res) {
  * @param {string} smsCode
  * @param {string} tel
  * @param {string} password
+ * @param {string} inviteCode
  * @return {object}
  */
 router.post("/user",function (req,res) {
     let smsCode = req.body.smsCode;
-    let user = req.body.user;
+    let tel = req.body.tel;
+    let password = req.body.password;
+    let inviteCode = req.body.inviteCode;
     let responseMessage = new ResponseMessage();
     if(!smsCode){
         responseMessage.exception(Status.EXCEPTION_PARAMS,"短信验证码不能为空!");
         return res.json(responseMessage);
     }
-    if(!user){
-        responseMessage.exception(Status.EXCEPTION_PARAMS,"用户信息不能为空!");
-        return res.json(responseMessage);
-    }
-    if(!user.tel || !constants.TELEPHONE_REGEX.exec(user.tel)){
+    if(!tel || !constants.TELEPHONE_REGEX.exec(tel)){
         responseMessage.exception(Status.EXCEPTION_PARAMS,"手机格式不正确!");
         return res.json(responseMessage);
     }
-    if(!user.password){
+    if(!password){
         responseMessage.exception(Status.EXCEPTION_PARAMS,"用户密码不能为空!");
         return res.json(responseMessage)
     }
     //验证手机短信验证码
-    redis.exists(constants.SMS_REGISTER_PREFIX+user.tel,function (error,result) {
+    redis.exists(constants.SMS_REGISTER_PREFIX+tel,function (error,result) {
         if(error){
             console.log(error);
             responseMessage.exception(Status.EXCEPTION_INNER_ERROR,"服务器内部错误!");
@@ -101,36 +100,37 @@ router.post("/user",function (req,res) {
             responseMessage.exception(Status.EXCEPTION_PARAMS,"验证码已失效,请重新发送!");
             return res.json(responseMessage);
         }
-        redis.get("register"+user.tel,function (error,code ) {
+        redis.get("register"+tel,function (error,code ) {
             if(smsCode !== code){
                 responseMessage.exception(Status.EXCEPTION_PARAMS,"验证码不匹配,请重新输入!");
                 return res.json(responseMessage);
             }
             //验证手机号是否注册过
-            userMapper.findByTel(user.tel).then(rows=>{
+            userMapper.findByTel(tel).then(rows=>{
                 if(rows && rows.length > 0){
                     responseMessage.exception(Status.EXCEPTION_ADD,"该手机号已经注册!");
                     return res.json(responseMessage);
                 }
                 //用户注册(将用户名默认设置为手机号)
-                user.username = user.tel;
-                user.password = utils.md5(user.password);
+                let user = {};
+                user.tel = tel;
+                user.username = tel;
+                user.password = utils.md5(password);
                 //匹配mysql邀请码字段
-                user.invite_code = user.inviteCode;
+                user.invite_code = inviteCode;
                 user.usertype = 3;//前台用户
-                delete user["inviteCode"];
                 userMapper.save(user).then(id=>{
                     responseMessage.success(null,"注册成功!");
-                    res.json(responseMessage);
+                    return res.json(responseMessage);
                 }).catch(error=>{
                     console.log(error);
                     responseMessage.exception(Status.EXCEPTION_ADD,"注册失败!");
-                    res.json(responseMessage);
+                    return res.json(responseMessage);
                 })
             }).catch(error=>{
                 console.log(error);
                 responseMessage.exception(Status.EXCEPTION_QUERY,"查询失败!");
-                res.json(responseMessage);
+                return res.json(responseMessage);
             })
         })
     })

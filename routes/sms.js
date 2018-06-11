@@ -19,24 +19,25 @@ Buffer.prototype.toByteArray = function () {
  */
 router.get("/sendSms/:tel", (req, res) => {
     let tel = req.params.tel;
-    var responseMessage = new ResponseMessage();
+    let responseMessage = new ResponseMessage();
     redis.exists(constants.SMS_REGISTER_PREFIX + tel, function (err, result) {
         if(result === 1){
             responseMessage.exception(Status.EXCEPTION_PARAMS,"请求过于频繁,请稍后再试!");
             return res.json(responseMessage);
         }
+        //生成4位数字的随机数
+        let code = Math.floor(Math.random() * (9999 - 999 + 1) + 999)+"";
+        //发送短信验证码
+        sendSms(tel,code).then(obj=>{
+            redis.set(constants.SMS_REGISTER_PREFIX+tel,code,"EX",300);
+            responseMessage.success("验证码发送成功!"+code,null);
+            return res.json(responseMessage);
+        }).catch(error=>{
+            responseMessage.exception(Status.EXCEPTION_SMS,error);
+            return res.json(responseMessage);
+        });
     });
-    //生成4位数字的随机数
-    let code = Math.floor(Math.random() * (9999 - 999 + 1) + 999)+"";
-    //发送短信验证码
-    sendSms(tel,code).then(obj=>{
-        redis.set(constants.SMS_REGISTER_PREFIX+tel,code,"EX",300);
-        responseMessage.success("验证码发送成功!",null);
-        res.json(responseMessage);
-    }).catch(error=>{
-        responseMessage.exception(Status.EXCEPTION_SMS,error);
-        res.json(responseMessage);
-    });
+
 });
 
 /**
@@ -57,9 +58,9 @@ function sendSms(mobile,code) {
     //验签参数
     let token = "123456";
     //短信通道编号
-    let channelNo = "2";
+    let channelNo = "1";
     //模板编号
-    let templateNo = "1";
+    let templateNo = "2";
 
     //身份认证
     let authorization = "Basic " +  utils.base64encode(new Buffer(account + ":" + password).toByteArray());
@@ -99,7 +100,6 @@ function sendSms(mobile,code) {
             }
         });
     });
-
 }
 module.exports = router;
 
