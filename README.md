@@ -39,3 +39,18 @@ curl -s -X POST \
 - tel：user's telephone number
 - password：user's password 
 
+### User update password
+```
+curl -s -X POST \
+  http://127.0.0.1:3000/user/updatePassword \
+  -H "content-type: application/json" \
+  -d '{
+      	"smsCode":"5400",
+      	"tel":"18621870243",
+      	"newpassword":"123456AaB"
+      }'
+```
+- smsCode : short message code
+- tel：user's telephone number
+- newpassword：user's new password 
+

@@ -30,7 +30,7 @@ router.get("/sendSms/:tel", (req, res) => {
         //发送短信验证码
         sendSms(tel,code).then(obj=>{
             redis.set(constants.SMS_REGISTER_PREFIX+tel,code,"EX",300);
-            responseMessage.success("验证码发送成功!"+code,null);
+            responseMessage.success("验证码发送成功!",null);
             return res.json(responseMessage);
         }).catch(error=>{
             responseMessage.exception(Status.EXCEPTION_SMS,error);

@@ -64,6 +64,84 @@ router.get("/user",function (req,res) {
 })
 
 /**
+ * User update password
+ * @param {string} smsCode
+ * @param {string} tel
+ * @param {string} newPassword
+ * @return {object}
+ */
+router.post("/user/updatePassword",function (req,res) {
+    let smsCode = req.body.smsCode;
+    let tel = req.body.tel;
+    let newpassword = req.body.newpassword;
+    let responseMessage = new ResponseMessage();
+    if(!smsCode){
+        responseMessage.exception(Status.EXCEPTION_PARAMS,"短信验证码不能为空!");
+        return res.json(responseMessage);
+    }
+    if(!tel || !constants.TELEPHONE_REGEX.test(tel)){
+        responseMessage.exception(Status.EXCEPTION_PARAMS,"手机格式不正确!");
+        return res.json(responseMessage);
+    }
+    if(!newpassword){
+        responseMessage.exception(Status.EXCEPTION_PARAMS,"用户密码不能为空!");
+        return res.json(responseMessage)
+    }
+    if(!constants.ALPHA_NUMBER.test(newpassword)){
+        responseMessage.exception(Status.EXCEPTION_PARAMS,"密码只能由字母和数字组成!");
+        return res.json(responseMessage);
+    }
+    if(!constants.PASSWORD_REGEX.test(newpassword)){
+        responseMessage.exception(Status.EXCEPTION_PARAMS,"密码长度为8-20位，且至少有一个大写字母、小写字母和一个数字!");
+        return res.json(responseMessage);
+    }
+    //验证手机短信验证码
+    redis.exists(constants.SMS_REGISTER_PREFIX+tel,function (error,result) {
+        if(error){
+            console.log(error);
+            responseMessage.exception(Status.EXCEPTION_INNER_ERROR,"服务器内部错误!");
+            return res.json(responseMessage);
+        }
+        if(result !== 1){
+            responseMessage.exception(Status.EXCEPTION_PARAMS,"验证码已失效,请重新发送!");
+            return res.json(responseMessage);
+        }
+        redis.get(constants.SMS_REGISTER_PREFIX+tel,function (error,code ) {
+            if(smsCode !== code){
+                responseMessage.exception(Status.EXCEPTION_PARAMS,"验证码不匹配,请重新输入!");
+                return res.json(responseMessage);
+            }
+            //验证手机号是否注册过
+            userMapper.findByTel(tel).then(rows=>{
+                if(!rows || rows.length === 0){
+                    responseMessage.exception(Status.EXCEPTION_ADD,"该手机号未注册!");
+                    return res.json(responseMessage);
+                }
+                userMapper.updatePassword(rows[0].userid,utils.md5(newpassword)).then(id=>{
+                    responseMessage.success(null,"密码修改成功!");
+                    //注册成功移除redis短信验证码缓存
+                    redis.del(constants.SMS_REGISTER_PREFIX+tel,function (error,code) {
+                        if(error){
+                            console.log("error = " + error + ", code = " + code);
+                        }
+                    })
+                    return res.json(responseMessage);
+                }).catch(error=>{
+                    console.log(error);
+                    responseMessage.exception(Status.EXCEPTION_ADD,"修改密码失败!");
+                    return res.json(responseMessage);
+                })
+            }).catch(error=>{
+                console.log(error);
+                responseMessage.exception(Status.EXCEPTION_QUERY,"查询失败!");
+                return res.json(responseMessage);
+            })
+        })
+    })
+
+});
+
+/**
  * User register
  * @param {string} smsCode
  * @param {string} tel
@@ -89,6 +167,14 @@ router.post("/user",function (req,res) {
         responseMessage.exception(Status.EXCEPTION_PARAMS,"用户密码不能为空!");
         return res.json(responseMessage)
     }
+    if(!constants.ALPHA_NUMBER.test(password)){
+        responseMessage.exception(Status.EXCEPTION_PARAMS,"密码只能由字母和数字组成!");
+        return res.json(responseMessage);
+    }
+    if(!constants.PASSWORD_REGEX.test(password)){
+        responseMessage.exception(Status.EXCEPTION_PARAMS,"密码长度为8-20位，且至少有一个大写字母、小写字母和一个数字!");
+        return res.json(responseMessage);
+    }
     //验证手机短信验证码
     redis.exists(constants.SMS_REGISTER_PREFIX+tel,function (error,result) {
         if(error){
@@ -100,7 +186,7 @@ router.post("/user",function (req,res) {
             responseMessage.exception(Status.EXCEPTION_PARAMS,"验证码已失效,请重新发送!");
             return res.json(responseMessage);
         }
-        redis.get("register"+tel,function (error,code ) {
+        redis.get(constants.SMS_REGISTER_PREFIX+tel,function (error,code ) {
             if(smsCode !== code){
                 responseMessage.exception(Status.EXCEPTION_PARAMS,"验证码不匹配,请重新输入!");
                 return res.json(responseMessage);
@@ -121,6 +207,12 @@ router.post("/user",function (req,res) {
                 user.usertype = 3;//前台用户
                 userMapper.save(user).then(id=>{
                     responseMessage.success(null,"注册成功!");
+                    //注册成功移除redis短信验证码缓存
+                    redis.del(constants.SMS_REGISTER_PREFIX+tel,function (error,code) {
+                        if(error){
+                            console.log("error = " + error + ", code = " + code);
+                        }
+                    })
                     return res.json(responseMessage);
                 }).catch(error=>{
                     console.log(error);

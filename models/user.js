@@ -38,3 +38,13 @@ exports.save = function(user){
     return pool.query("insert into sys_user SET ?", user);
 }
 
+/**
+ * Update user's password
+ * @param {string} id
+ * @param {string} newpassword
+ * @return {Promise}
+ */
+exports.updatePassword = function(id,newpassword){
+    return pool.query("update sys_user set password = ? where userid = ?",[newpassword,id]);
+}
+
