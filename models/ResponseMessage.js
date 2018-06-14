@@ -8,21 +8,16 @@ var status = require('./Status');
  */
 
 function ResponseMessage() {
-    this.code;
-    this.msg;
-    this.data;
-    this.ext;
-    this.success = function (data, ext) {
+    this.success = function (data,msg,ext) {
         this.code = status.SUCCESS;
-        this.msg = '操作成功';
+        this.msg = msg || "操作成功!";
         this.data = data;
         this.ext = ext;
         return this;
     };
-    this.exception = function (code,ext) {
+    this.exception = function (code,msg) {
         this.code = code;
-        this.msg = '操作失败';
-        this.ext = ext;
+        this.msg = msg;
         return this;
     }
 }

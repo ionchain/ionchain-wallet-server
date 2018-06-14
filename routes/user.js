@@ -15,7 +15,7 @@ let utils = require('utility');
 router.get("/user/:tel", (req, res) => {
     let responseMessage = new ResponseMessage();
     userMapper.findByTel(req.params.tel).then(rows=>{
-        responseMessage.success(rows,null);
+        responseMessage.success(rows);
         res.json(responseMessage);
     }).catch(error=>{
         responseMessage.exception(Status.EXCEPTION_QUERY,error);
@@ -35,8 +35,7 @@ router.post("/user/login", (req, res) => {
     let responseMessage = new ResponseMessage();
     userMapper.findByTelAndPassword(tel,utils.md5(password)).then(rows=>{
         if(rows && rows.length === 1){
-            delete rows[0]["password"];
-            responseMessage.success(rows[0],null);
+            responseMessage.success(rows[0]);
             res.json(responseMessage);
         }else{
             responseMessage.exception(Status.EXCEPTION_QUERY,"用户名或者密码不匹配!")
@@ -55,7 +54,7 @@ router.post("/user/login", (req, res) => {
 router.get("/user",function (req,res) {
     let responseMessage = new ResponseMessage();
     userMapper.findAll().then(rows=>{
-        responseMessage.success(rows,null);
+        responseMessage.success(rows);
         res.json(responseMessage);
     }).catch(error=>{
         responseMessage.exception(Status.EXCEPTION_QUERY,error);
@@ -118,13 +117,13 @@ router.post("/user/updatePassword",function (req,res) {
                     return res.json(responseMessage);
                 }
                 userMapper.updatePassword(rows[0].userid,utils.md5(newpassword)).then(id=>{
-                    responseMessage.success(null,"密码修改成功!");
+                    responseMessage.success();
                     //注册成功移除redis短信验证码缓存
                     redis.del(constants.SMS_REGISTER_PREFIX+tel,function (error,code) {
                         if(error){
                             console.log("error = " + error + ", code = " + code);
                         }
-                    })
+                    });
                     return res.json(responseMessage);
                 }).catch(error=>{
                     console.log(error);
@@ -149,7 +148,7 @@ router.post("/user/updatePassword",function (req,res) {
  * @param {string} inviteCode
  * @return {object}
  */
-router.post("/user",function (req,res) {
+router.post("/user/register",function (req,res) {
     let smsCode = req.body.smsCode;
     let tel = req.body.tel;
     let password = req.body.password;
@@ -206,13 +205,13 @@ router.post("/user",function (req,res) {
                 user.invite_code = inviteCode;
                 user.usertype = 3;//前台用户
                 userMapper.save(user).then(id=>{
-                    responseMessage.success(null,"注册成功!");
+                    responseMessage.success();
                     //注册成功移除redis短信验证码缓存
                     redis.del(constants.SMS_REGISTER_PREFIX+tel,function (error,code) {
                         if(error){
                             console.log("error = " + error + ", code = " + code);
                         }
-                    })
+                    });
                     return res.json(responseMessage);
                 }).catch(error=>{
                     console.log(error);

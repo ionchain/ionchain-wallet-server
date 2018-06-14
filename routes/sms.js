@@ -17,27 +17,41 @@ Buffer.prototype.toByteArray = function () {
  * @param{string} tel
  * @return {object}
  */
-router.get("/sendSms/:tel", (req, res) => {
-    let tel = req.params.tel;
+router.post("/sendSms", (req, res) => {
+    let tel = req.body.tel;
     let responseMessage = new ResponseMessage();
+    if(!tel || !constants.TELEPHONE_REGEX.test(tel)){
+        responseMessage.exception(Status.EXCEPTION_PARAMS,"手机格式不正确!");
+        return res.json(responseMessage);
+    }
     redis.exists(constants.SMS_REGISTER_PREFIX + tel, function (err, result) {
         if(result === 1){
             responseMessage.exception(Status.EXCEPTION_PARAMS,"请求过于频繁,请稍后再试!");
             return res.json(responseMessage);
         }
-        //生成4位数字的随机数
-        let code = Math.floor(Math.random() * (9999 - 999 + 1) + 999)+"";
-        //发送短信验证码
-        sendSms(tel,code).then(obj=>{
-            redis.set(constants.SMS_REGISTER_PREFIX+tel,code,"EX",300);
-            responseMessage.success("验证码发送成功!",null);
-            return res.json(responseMessage);
-        }).catch(error=>{
-            responseMessage.exception(Status.EXCEPTION_SMS,error);
-            return res.json(responseMessage);
-        });
+        redis.get(constants.SMS_COUNTER + tel , function (error, counter) {
+            console.log(counter);
+            if(!counter){
+                redis.set(constants.SMS_COUNTER + tel,1,"EX","1800");
+            }else if(counter > 5){
+                responseMessage.exception(Status.EXCEPTION_PARAMS,"半小时内只能发送五次短信!");
+                return res.json(responseMessage);
+            }else{
+                redis.incr(constants.SMS_COUNTER + tel);
+            }
+            //生成4位数字的随机数
+            let code = Math.floor(Math.random() * (9999 - 999 + 1) + 999)+"";
+            //发送短信验证码
+            sendSms(tel,code).then(obj=>{
+                redis.set(constants.SMS_REGISTER_PREFIX+tel,code,"EX",60);
+                responseMessage.success();
+                return res.json(responseMessage);
+            }).catch(error=>{
+                responseMessage.exception(Status.EXCEPTION_SMS,error);
+                return res.json(responseMessage);
+            });
+        })
     });
-
 });
 
 /**

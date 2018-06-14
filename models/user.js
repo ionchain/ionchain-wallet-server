@@ -17,7 +17,7 @@ exports.findByTel = function(tel) {
  * @returns {Promise}
  */
 exports.findByTelAndPassword = function(tel,password) {
-    let sql = "SELECT * FROM sys_user where tel = ? and password = ?";
+    let sql = "SELECT userid,username,tel FROM sys_user where tel = ? and password = ?";
     return pool.query(sql,[tel,password]);
 };
 

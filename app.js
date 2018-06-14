@@ -15,6 +15,7 @@ var article = require('./routes/article');
 var image = require('./routes/image');
 let user = require('./routes/user');
 let sms = require('./routes/sms');
+let sys = require('./routes/sys');
 
 
 
@@ -53,7 +54,7 @@ app.use('/article', article);
 app.use('/jflyfox/bbs/ueditor/image', image);
 app.use('/',user);
 app.use("/",sms);
-
+app.use("/",sys);
 
 
 // catch 404 and forward to error handler
