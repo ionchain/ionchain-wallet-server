@@ -1,49 +1,123 @@
-var express = require('express');
-var router = express.Router();
+let express = require("express");
+let router = express.Router();
+let articleMapper = require("../models/article");
+let userMapper = require('../models/user');
+let ResponseMessage = require('../models/ResponseMessage');
+let Status = require('../models/Status');
+let utils = require('utility');
 
-var Article = require('../models/articles');
-var ResponseMessage = require('../models/ResponseMessage');
-var STATUS = require('../models/Status');
+/**
+ * Find articles
+ * @param {int} pageNo (default 1)
+ * @param {int} pageSize (default 10)
+ * @userId {int} user's Id
+ * @return {object}
+ */
+router.post("/article/findAll", (req, res) => {
+    let pageNo = req.body.pageNo || 1;
+    let pageSize = req.body.pageSize || 10;
+    let userId = req.body.userId;
+    let responseMessage = new ResponseMessage();
+    articleMapper.findAll(userId,(pageNo - 1) * pageSize, pageSize).then(rows=>{
+        articleMapper.findCount().then(count=>{
+            responseMessage.success(rows,"操作成功!",count[0]);
+            return res.json(responseMessage);
+        }).catch(error=>{
+            responseMessage.exception(Status.EXCEPTION_QUERY,error);
+            return res.json(responseMessage);
+        })
+    }).catch(error=>{
+        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        return res.json(responseMessage);
+    })
+});
 
-router.get('/:id?', function(req, res, next){
-    if(req.params.id){
-         Article.getArticleById(req.params.id, function (err, rows) {
-            var responseMessage = new ResponseMessage();
-            if(err) {
-                responseMessage.exception(STATUS.EXCEPTION_QUERY,null);
-            } else {
-                responseMessage.success(rows, null);
-            }
-            res.json(responseMessage);
-        });
-    } else {
-        var current_page = 1; //默认为1
-        var pageSize = 5; //一页条数
-        if (req.query.pageNumber) {
-            current_page = parseInt(req.query.pageNumber);
+/**
+ * Find article details
+ * @param {int} articleId
+ * @return {object}
+ */
+router.post("/article/detail",function (req,res) {
+    let articleId = req.body.articleId;
+    let responseMessage = new ResponseMessage();
+    articleMapper.findArticleById(articleId).then(row=>{
+        if(!row || row.length === 0){
+            responseMessage.exception(Status.EXCEPTION_QUERY,"文章不存在,请检查后再发!");
+            return res.json(responseMessage);
         }
-        if (req.query.pageSize) {
-            pageSize = parseInt(req.query.pageSize);
-        }
+        responseMessage.success(row[0]);
+        return res.json(responseMessage);
+    }).catch(error=>{
+        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        return res.json(responseMessage);
+    })
+});
 
-        var last_page = current_page - 1;
-        if (current_page <= 1) {
-            last_page = 1;
+/**
+ * View article
+ * @param {int} articleId
+ * @return {object}
+ */
+router.post("/article/view",function (req,res) {
+    let articleId = req.body.articleId;
+    let responseMessage = new ResponseMessage();
+    articleMapper.findArticleById(articleId).then(row=>{
+        if(!row || row.length === 0){
+            responseMessage.exception(Status.EXCEPTION_QUERY,"文章不存在,请检查后再发!");
+            return res.json(responseMessage);
         }
-         Article.getAllArticle(pageSize, pageSize * (current_page - 1), function(err, rows){
-            var responseMessage = new ResponseMessage();
-            if(err)
-            {
-                console.info(err);
-                responseMessage.exception(STATUS.EXCEPTION_QUERY, null);
+        articleMapper.IncreaseViewCount(articleId).then(row=>{
+            responseMessage.success();
+            return res.json(responseMessage);
+        }).catch(error=>{
+            responseMessage.exception(Status.EXCEPTION_UPDATE,error);
+            return res.json(responseMessage);
+        })
+    }).catch(error=>{
+        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        return res.json(responseMessage);
+    })
+});
+
+/**
+ * Praise article
+ * @param {int} articleId
+ * @param {int} userId
+ * @return {object}
+ */
+router.post("/article/praise",function (req,res) {
+    let articleId = req.body.articleId;
+    let userId = req.body.userId;
+    let articleLike = {};
+    articleLike.article_id = articleId;
+    articleLike.create_id = userId;
+    articleLike.create_time = utils.YYYYMMDDHHmmss();
+    let responseMessage = new ResponseMessage();
+    articleMapper.findArticleById(articleId).then(row=>{
+        if(!row || row.length === 0){
+            responseMessage.exception(Status.EXCEPTION_QUERY,"文章不存在,请检查后再发!");
+            return res.json(responseMessage);
+        }
+        userMapper.findById(userId).then(row=>{
+            if(!row || row.length === 0){
+                responseMessage.exception(Status.EXCEPTION_QUERY,"用户信息不存在,请检查后再发!");
+                return res.json(responseMessage);
             }
-            else
-            {
-                responseMessage.success(rows, null);
-            }
-            res.json(responseMessage);
-        });
-    }
+            articleMapper.IncreasePraiseCount(articleLike).then(row=>{
+                responseMessage.success();
+                return res.json(responseMessage);
+            }).catch(error=>{
+                responseMessage.exception(Status.EXCEPTION_ADD,error);
+                return res.json(responseMessage);
+            })
+        }).catch(error=>{
+            responseMessage.exception(Status.EXCEPTION_UPDATE,error);
+            return res.json(responseMessage);
+        })
+    }).catch(error=>{
+        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        res.json(responseMessage);
+    })
 });
 
 module.exports = router;

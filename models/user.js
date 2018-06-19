@@ -11,6 +11,16 @@ exports.findByTel = function(tel) {
 };
 
 /**
+ * Find users through userId
+ * @param {string} tel
+ * @returns {Promise}
+ */
+exports.findById = function(userId) {
+    let sql = "SELECT * FROM sys_user where userid = ?";
+    return pool.query(sql,[userId])
+};
+
+/**
  * Find user through telephone and password
  * @param{string} tel
  * @param{string} password

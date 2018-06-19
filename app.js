@@ -50,7 +50,7 @@ app.use('/tasks',tasks);
 app.use('/sms',walletSms);
 app.use('/token',walletToken);
 app.use('/news', News);
-app.use('/article', article);
+app.use('/', article);
 app.use('/jflyfox/bbs/ueditor/image', image);
 app.use('/',user);
 app.use("/",sms);

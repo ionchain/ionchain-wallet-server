@@ -17,7 +17,7 @@ function ResponseMessage() {
     };
     this.exception = function (code,msg) {
         this.code = code;
-        this.msg = msg;
+        this.msg = msg || "操作失败";
         return this;
     }
 }
