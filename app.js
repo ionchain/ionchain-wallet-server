@@ -16,8 +16,16 @@ var image = require('./routes/image');
 let user = require('./routes/user');
 let sms = require('./routes/sms');
 let sys = require('./routes/sys');
+let inviteRecord  = require("./routes/inviteRecord");
+let coinRecord = require("./routes/coinRecord");
+let random = require("./utils/inviteCode");
 
-
+//初始化方法
+function init(){
+    //加载邀请码到redis缓存
+    random.loadInviteCodes();
+}
+init();
 
 var signature = require('./models/SignatureVerfy');
 
@@ -55,7 +63,8 @@ app.use('/jflyfox/bbs/ueditor/image', image);
 app.use('/',user);
 app.use("/",sms);
 app.use("/",sys);
-
+app.use("/",inviteRecord);
+app.use("/",coinRecord);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -75,7 +84,6 @@ app.use(function(err, req, res, next) {
 
 app.listen(3000,function () {
     console.log("app listen on 3000");
-})
-
+});
 
 module.exports = app;

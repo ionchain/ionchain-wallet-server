@@ -5,6 +5,9 @@ let userMapper = require('../models/user');
 let ResponseMessage = require('../models/ResponseMessage');
 let Status = require('../models/Status');
 let utils = require('utility');
+let log4js = require('log4js');
+log4js.configure('config/log4j.json');
+let logger = log4js.getLogger("article");
 
 /**
  * Find articles
@@ -23,11 +26,13 @@ router.post("/article/findAll", (req, res) => {
             responseMessage.success(rows,"操作成功!",count[0]);
             return res.json(responseMessage);
         }).catch(error=>{
-            responseMessage.exception(Status.EXCEPTION_QUERY,error);
+            logger.error(error);
+            responseMessage.exception(Status.EXCEPTION_QUERY);
             return res.json(responseMessage);
         })
     }).catch(error=>{
-        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
         return res.json(responseMessage);
     })
 });
@@ -48,7 +53,8 @@ router.post("/article/detail",function (req,res) {
         responseMessage.success(row[0]);
         return res.json(responseMessage);
     }).catch(error=>{
-        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
         return res.json(responseMessage);
     })
 });
@@ -70,11 +76,13 @@ router.post("/article/view",function (req,res) {
             responseMessage.success();
             return res.json(responseMessage);
         }).catch(error=>{
-            responseMessage.exception(Status.EXCEPTION_UPDATE,error);
+            logger.error(error);
+            responseMessage.exception(Status.EXCEPTION_UPDATE);
             return res.json(responseMessage);
         })
     }).catch(error=>{
-        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
         return res.json(responseMessage);
     })
 });
@@ -107,15 +115,18 @@ router.post("/article/praise",function (req,res) {
                 responseMessage.success();
                 return res.json(responseMessage);
             }).catch(error=>{
-                responseMessage.exception(Status.EXCEPTION_ADD,error);
+                logger.error(error);
+                responseMessage.exception(Status.EXCEPTION_ADD);
                 return res.json(responseMessage);
             })
         }).catch(error=>{
-            responseMessage.exception(Status.EXCEPTION_UPDATE,error);
+            logger.error(error);
+            responseMessage.exception(Status.EXCEPTION_UPDATE);
             return res.json(responseMessage);
         })
     }).catch(error=>{
-        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
         res.json(responseMessage);
     })
 });

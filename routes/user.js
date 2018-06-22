@@ -1,11 +1,16 @@
 let express = require("express");
 let router = express.Router();
 let userMapper = require("../models/user");
+let inviteCodeUtils = require("../utils/inviteCode");
+let queue = require("../event/taskqueue");
 let redis = require("../utils/redis");
 let constants = require("../utils/constants");
 let ResponseMessage = require('../models/ResponseMessage');
 let Status = require('../models/Status');
 let utils = require('utility');
+let log4js = require('log4js');
+log4js.configure('config/log4j.json');
+let logger = log4js.getLogger("user");
 
 /**
  * Find user through telephone number
@@ -18,7 +23,8 @@ router.get("/user/:tel", (req, res) => {
         responseMessage.success(rows);
         res.json(responseMessage);
     }).catch(error=>{
-        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
         res.json(responseMessage);
     })
 });
@@ -42,7 +48,8 @@ router.post("/user/login", (req, res) => {
             res.json(responseMessage);
         }
     }).catch(error=>{
-        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
         res.json(responseMessage);
     })
 });
@@ -57,10 +64,11 @@ router.get("/user",function (req,res) {
         responseMessage.success(rows);
         res.json(responseMessage);
     }).catch(error=>{
-        responseMessage.exception(Status.EXCEPTION_QUERY,error);
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
         res.json(responseMessage);
     })
-})
+});
 
 /**
  * User update password
@@ -97,7 +105,7 @@ router.post("/user/updatePassword",function (req,res) {
     //验证手机短信验证码
     redis.exists(constants.SMS_REGISTER_PREFIX+tel,function (error,result) {
         if(error){
-            console.log(error);
+            logger.error(error);
             responseMessage.exception(Status.EXCEPTION_INNER_ERROR,"服务器内部错误!");
             return res.json(responseMessage);
         }
@@ -121,23 +129,22 @@ router.post("/user/updatePassword",function (req,res) {
                     //注册成功移除redis短信验证码缓存
                     redis.del(constants.SMS_REGISTER_PREFIX+tel,function (error,code) {
                         if(error){
-                            console.log("error = " + error + ", code = " + code);
+                            logger.error("error = " + error + ", code = " + code);
                         }
                     });
                     return res.json(responseMessage);
                 }).catch(error=>{
-                    console.log(error);
+                    logger.error(error);
                     responseMessage.exception(Status.EXCEPTION_ADD,"修改密码失败!");
                     return res.json(responseMessage);
                 })
             }).catch(error=>{
-                console.log(error);
+                logger.error(error);
                 responseMessage.exception(Status.EXCEPTION_QUERY,"查询失败!");
                 return res.json(responseMessage);
             })
         })
     })
-
 });
 
 /**
@@ -148,7 +155,7 @@ router.post("/user/updatePassword",function (req,res) {
  * @param {string} inviteCode
  * @return {object}
  */
-router.post("/user/register",function (req,res) {
+router.post("/user/register", async function (req,res) {
     let smsCode = req.body.smsCode;
     let tel = req.body.tel;
     let password = req.body.password;
@@ -174,15 +181,22 @@ router.post("/user/register",function (req,res) {
         responseMessage.exception(Status.EXCEPTION_PARAMS,"密码长度为8-20位，且至少有一个大写字母、小写字母和一个数字!");
         return res.json(responseMessage);
     }
+    if(inviteCode){
+        let user = await userMapper.findByInviteCode(inviteCode);
+        if(!user || user.length === 0){
+            responseMessage.exception(Status.EXCEPTION_PARAMS,"无效的邀请码!");
+            return res.json(responseMessage);
+        }
+    }
     //验证手机短信验证码
     redis.exists(constants.SMS_REGISTER_PREFIX+tel,function (error,result) {
         if(error){
-            console.log(error);
+            logger.error(error);
             responseMessage.exception(Status.EXCEPTION_INNER_ERROR,"服务器内部错误!");
             return res.json(responseMessage);
         }
         if(result !== 1){
-            responseMessage.exception(Status.EXCEPTION_PARAMS,"验证码已失效,请重新发送!");
+            responseMessage.exception(Status.EXCEPTION_PARAMS,"验证码已失效,请重新获取!");
             return res.json(responseMessage);
         }
         redis.get(constants.SMS_REGISTER_PREFIX+tel,function (error,code ) {
@@ -196,34 +210,43 @@ router.post("/user/register",function (req,res) {
                     responseMessage.exception(Status.EXCEPTION_ADD,"该手机号已经注册!");
                     return res.json(responseMessage);
                 }
-                //用户注册(将用户名默认设置为手机号)
-                let user = {};
-                user.tel = tel;
-                user.username = tel;
-                user.password = utils.md5(password);
-                //匹配mysql邀请码字段
-                user.invite_code = inviteCode;
-                user.usertype = 3;//前台用户
-                userMapper.save(user).then(id=>{
-                    responseMessage.success();
-                    //注册成功移除redis短信验证码缓存
-                    redis.del(constants.SMS_REGISTER_PREFIX+tel,function (error,code) {
-                        if(error){
-                            console.log("error = " + error + ", code = " + code);
+                inviteCodeUtils.createInviteCode().then(newInviteCode=>{
+                    //用户注册(将用户名默认设置为手机号)
+                    let user = {};
+                    user.tel = tel;
+                    user.username = tel;
+                    user.password = utils.md5(password);
+                    user.usertype = 3;//前台用户
+                    user.invite_code = newInviteCode;
+                    userMapper.save(user).then(id => {
+                        responseMessage.success();
+                        //注册成功移除redis短信验证码缓存
+                        redis.del(constants.SMS_REGISTER_PREFIX + tel, function (error, code) {
+                            if (error) {
+                                logger.error("error = " + error + ", code = " + code);
+                            }
+                        });
+                        queue.registerRewardQueue.push(id.insertId);
+                        if(inviteCode){
+                            queue.inviteRewardQueue.push({"userid":id.insertId,"invitecode":inviteCode,"create_time":utils.YYYYMMDDHHmmss()});
                         }
-                    });
-                    return res.json(responseMessage);
+                        return res.json(responseMessage);
+                    }).catch(error => {
+                        logger.error(error);
+                        responseMessage.exception(Status.EXCEPTION_ADD, "注册失败!");
+                        return res.json(responseMessage);
+                    })
                 }).catch(error=>{
-                    console.log(error);
-                    responseMessage.exception(Status.EXCEPTION_ADD,"注册失败!");
+                    logger.error(error);
+                    responseMessage.exception(Status.EXCEPTION_INNER_ERROR, "服务器内部错误");
                     return res.json(responseMessage);
                 })
             }).catch(error=>{
-                console.log(error);
+                logger.error(error);
                 responseMessage.exception(Status.EXCEPTION_QUERY,"查询失败!");
                 return res.json(responseMessage);
             })
         })
     })
-})
+});
 module.exports = router;

@@ -11,7 +11,7 @@ let StringBuffer = require("stringbuffer");
 
 Buffer.prototype.toByteArray = function () {
     return Array.prototype.slice.call(this, 0);
-}
+};
 /**
  * 发送短信验证码
  * @param{string} tel
@@ -30,7 +30,6 @@ router.post("/sendSms", (req, res) => {
             return res.json(responseMessage);
         }
         redis.get(constants.SMS_COUNTER + tel , function (error, counter) {
-            console.log(counter);
             if(!counter){
                 redis.set(constants.SMS_COUNTER + tel,1,"EX","1800");
             }else if(counter > 5){
@@ -104,6 +103,8 @@ function sendSms(mobile,code) {
     requestParams.sign = utils.md5(sb.toString()).toUpperCase();
 
     return new Promise(( resolve, reject ) => {
+        resolve("ok");
+        return;
         client.post(method, requestParams, function (err, res, body) {
             if (!err && body.code === 0) {
                 console.log("短信发送成功! body=" + JSON.stringify(body));

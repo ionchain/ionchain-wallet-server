@@ -6,6 +6,8 @@ ionchain wallet server
 - [User](#user)
 - [System](#system)
 - [Article](#article)
+- [InviteRecord](#inviteRecord)
+- [CoinRecord](#coinRecord)
 
 ## Tools
 ### Send SMS
@@ -38,10 +40,10 @@ curl -s -X POST \
   http://127.0.0.1:3000/user/register \
   -H "content-type: application/json" \
   -d '{
-      	"smsCode":"5679",
+      	"smsCode":"6923",
       	"tel":"18621870243",
-      	"password":"123456",
-      	"inviteCode":"9527"
+      	"password":"123456782A1a",
+      	"inviteCode":"B8IMLH"
       }'
 ```
 - smsCode : short message code
@@ -66,7 +68,7 @@ curl -s -X POST \
   -H "content-type: application/json" \
   -d '{
       	"tel":"18621870243",
-      	"password":"123456"
+      	"password":"123456782A1a"
       }'
 ```
 - tel：user's telephone number
@@ -78,17 +80,21 @@ curl -s -X POST \
     "code": 0,
     "msg": "操作成功!",
     "data": {
-        "userid": 8,
-        "username": "18621870243",
-        "tel": "18621870243"
+        "userId": 22,
+        "userName": "18673692416",
+        "tel": "18673692416",
+        "inviteCode": "B8IMLH",
+        "coin": 130
     }
 }
 ```
 - code : 0 means success, other representatives fail 
 - msg : explanation of code
-- userid : user's id
-- username : user's name
+- userId : user's id
+- userName : user's name
 - tel : user's telephone number
+- inviteCode : user's inviteCode
+- coin : the number of user's coin
 
 ### User update password
 ```
@@ -96,7 +102,7 @@ curl -s -X POST \
   http://127.0.0.1:3000/user/updatePassword \
   -H "content-type: application/json" \
   -d '{
-      	"smsCode":"5400",
+      	"smsCode":"8869",
       	"tel":"18621870243",
       	"newpassword":"123456AaB"
       }'
@@ -118,7 +124,7 @@ curl -s -X POST \
 ## System
 ### System Information
 ```
-curl -s -X GET \
+curl -s -X POST \
   http://127.0.0.1:3000/sys/info 
 ```
 ##### Response:
@@ -208,7 +214,7 @@ curl -s -X POST \
   http://127.0.0.1:3000/article/detail \
   -H "content-type: application/json" \
   -d '{
-      	"articleId":1,
+      	"articleId":1
       }'
 ```
 - articleId : article'Id
@@ -240,7 +246,7 @@ curl -s -X POST \
   http://127.0.0.1:3000/article/view \
   -H "content-type: application/json" \
   -d '{
-      	"articleId":1,
+      	"articleId":1
       }'
 ```
 - articleId : article's Id
@@ -275,4 +281,76 @@ curl -s -X POST \
 - code : 0 means success, other representatives fail 
 - msg : explanation of code
 
+## InviteRecord
+ 
+### Find User's Invite Records
+```
+curl -s -X POST \
+  http://127.0.0.1:3000/inviteRecord/findAll \
+  -H "content-type: application/json" \
+  -d '{
+        "inviteCode":"B8IMLH"
+      }'
+```
+- inviteCode : user's inviteCode
+##### Response:
+ ```
+{
+    "code": 0,
+    "msg": "操作成功!",
+    "data": [
+        {
+            "tel": "18621870243",
+            "createTime": "2018-06-22 10:04:17"
+        }
+    ],
+    "ext": {
+        "totalCount": 1
+    }
+}
+ ```
+- code : 0 means success, other representatives fail 
+- msg : explanation of code
+- tel：user's telephone number
+- createTime : record's createTime
+- totalCount : total number of invite records
+
+
+## CoinRecord
+ 
+### Find coin's Records
+```
+curl -s -X POST \
+  http://127.0.0.1:3000/coinRecord/findAll \
+  -H "content-type: application/json" \
+  -d '{
+        "userId":23
+      }'
+```
+- userId : user's Id
+##### Response:
+ ```
+{
+    "code": 0,
+    "msg": "操作成功!",
+    "data": [
+        {
+            "userId": 23,
+            "createTime": "2018-06-22 10:04:17",
+            "type": 1,
+            "amount": "30"
+        }
+    ],
+    "ext": {
+        "totalCount": 1
+    }
+}
+ ```
+- code : 0 means success, other representatives fail 
+- msg : explanation of code
+- userId : user's Id
+- createTime : record's createTime
+- type : 1 means register,2 means invite user ,3 means sign
+- amount : amount
+ 
  
