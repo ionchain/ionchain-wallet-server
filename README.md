@@ -6,8 +6,8 @@ ionchain wallet server
 - [User](#user)
 - [System](#system)
 - [Article](#article)
-- [InviteRecord](#inviteRecord)
-- [CoinRecord](#coinRecord)
+- [InviteRecord](#inviterecord)
+- [CoinRecord](#coinrecord)
 
 ## Tools
 ### Send SMS
@@ -282,7 +282,6 @@ curl -s -X POST \
 - msg : explanation of code
 
 ## InviteRecord
- 
 ### Find User's Invite Records
 ```
 curl -s -X POST \
@@ -317,14 +316,13 @@ curl -s -X POST \
 
 
 ## CoinRecord
- 
 ### Find coin's Records
 ```
 curl -s -X POST \
   http://127.0.0.1:3000/coinRecord/findAll \
   -H "content-type: application/json" \
   -d '{
-        "userId":23
+         "userId":23
       }'
 ```
 - userId : user's Id
