@@ -15,8 +15,8 @@ let logger = log4js.getLogger("coinRecord");
  * @return {object}
  */
 router.post("/coinRecord/findAll", (req, res) => {
-    let pageNo = req.body.pageNo || 1;
-    let pageSize = req.body.pageSize || 10;
+    let pageNo = parseInt(req.body.pageNo) || 1;
+    let pageSize = parseInt(req.body.pageSize) || 10;
     let userId = req.body.userId;
     let responseMessage = new ResponseMessage();
     if(!userId){

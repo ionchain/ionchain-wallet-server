@@ -15,8 +15,8 @@ let logger = log4js.getLogger("inviteRecord");
  * @return {object}
  */
 router.post("/inviteRecord/findAll", (req, res) => {
-    let pageNo = req.body.pageNo || 1;
-    let pageSize = req.body.pageSize || 10;
+    let pageNo = parseInt(req.body.pageNo) || 1;
+    let pageSize = parseInt(req.body.pageSize) || 10;
     let inviteCode = req.body.inviteCode;
     let responseMessage = new ResponseMessage();
     if(!inviteCode){

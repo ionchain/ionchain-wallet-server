@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xml:lang="en-US" lang="en-US">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>IONChain</title>
+    <meta name="keywords" content="离子链,离子,物联网,边缘计算,IPFS">
+    <meta name="description" content="下一代物联网，首次提出'一物一币一码'和'万物皆矿机'的全新理念，以区块链技术和边缘计算为基础，开创性地设计了物联终端数据分享和交易机制，使用加强型去中心分布式加密存储与智能合约技术，实现对现有物联网底层的重构与革新。">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!--<link rel="shortcut icon" type="image/x-icon" href="ionchain_files/images/favicon-32x32.png">-->
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="/css/production.min.css">
+    <script type="text/javascript" src="/javascripts/jquery-3.3.1.min.js"></script>
+</head>
+<body class="bodyOrange layout_pub bodyHome">
+    <div id="container_newsDetail">
+        <section>
+            <div id="ion_token" class="ion_token">
+                <div class="ion_token_one news_limit_width">
+                    <div class="ion_token_one_block">
+                        <div class="mainBody">
+                            <div class="mainTitle">
+                                <%=title %>
+                            </div>
+                            <div class="dateTime">
+                                <div style="display:inline;float: left;"><%=author %></div><div style="display:inline;float:right"><%=createTime %></div>
+                            </div>
+                            <div class="mainContent">
+                                <div align="center" id="content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+<script>
+//HTML标签转义（< -> &lt;）
+function html2Escape(sHtml) {
+ return sHtml.replace(/[<>&"]/g,function(c){
+   return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];
+ });
+};
+//HTML标签反转义（&lt; -> <）
+function escape2Html(str) {
+  var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
+  return str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){
+    return arrEntities[t];
+  });
+}
+$(document).ready(function(){
+   $("#content").html(escape2Html('<%=content%>'));
+});
+</script>
+</html>

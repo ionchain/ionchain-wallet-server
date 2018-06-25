@@ -8,6 +8,7 @@ let utils = require('utility');
 let log4js = require('log4js');
 log4js.configure('config/log4j.json');
 let logger = log4js.getLogger("article");
+let dateUtils = require("../utils/dateUtils");
 
 /**
  * Find articles
@@ -17,8 +18,8 @@ let logger = log4js.getLogger("article");
  * @return {object}
  */
 router.post("/article/findAll", (req, res) => {
-    let pageNo = req.body.pageNo || 1;
-    let pageSize = req.body.pageSize || 10;
+    let pageNo = parseInt(req.body.pageNo) || 1;
+    let pageSize = parseInt(req.body.pageSize) || 10;
     let userId = req.body.userId;
     let responseMessage = new ResponseMessage();
     articleMapper.findAll(userId,(pageNo - 1) * pageSize, pageSize).then(rows=>{
@@ -129,6 +130,25 @@ router.post("/article/praise",function (req,res) {
         responseMessage.exception(Status.EXCEPTION_QUERY);
         res.json(responseMessage);
     })
+});
+
+/**
+ * Article web page
+ * @param {int} id
+ */
+router.get("/article/:id",function (req,res) {
+    let articleId = req.params.id;
+    articleMapper.findArticleById(articleId).then(row=>{
+        console.log(row);
+        if(!row || row.length === 0){
+            return res.render('404', { msg: '文章不存在!' });
+        }
+        row[0].createTime =dateUtils.dateDiff(row[0].createTime);
+        res.render('article/index', row[0]);
+    }).catch(error=>{
+        logger.error(error);
+        return res.render('404', { msg: '服务器内部错误!' });
+    });
 });
 
 module.exports = router;
