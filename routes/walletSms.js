@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var WalletSms = require('../models/WalletSms');
+var WalletSms = require('../models/walletSms');
 var ResponseMessage = require('../models/ResponseMessage');
 var STATUS = require('../models/Status');
 
