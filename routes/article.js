@@ -9,6 +9,7 @@ let log4js = require('log4js');
 log4js.configure('config/log4j.json');
 let logger = log4js.getLogger("article");
 let dateUtils = require("../utils/dateUtils");
+let config = require("../config/config.json");
 
 /**
  * Find articles
@@ -24,6 +25,9 @@ router.post("/article/findAll", (req, res) => {
     let responseMessage = new ResponseMessage();
     articleMapper.findAll(userId,(pageNo - 1) * pageSize, pageSize).then(rows=>{
         articleMapper.findCount().then(count=>{
+            for(let i = 0 ; i < rows.length ; i ++){
+                rows[i].url = config.host+":"+config.port+"/article/"+rows[i].id;
+            }
             responseMessage.success(rows,"操作成功!",count[0]);
             return res.json(responseMessage);
         }).catch(error=>{
@@ -139,7 +143,6 @@ router.post("/article/praise",function (req,res) {
 router.get("/article/:id",function (req,res) {
     let articleId = req.params.id;
     articleMapper.findArticleById(articleId).then(row=>{
-        console.log(row);
         if(!row || row.length === 0){
             return res.render('404', { msg: '文章不存在!' });
         }
