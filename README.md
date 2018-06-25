@@ -173,7 +173,8 @@ curl -s -X POST \
             "viewCount": 124,
             "praiseCount": 4,
             "isRecommend": 1,
-            "isPraise": 0
+            "isPraise": 0,
+            "url": "http://127.0.0.1:3000/article/1"
         },
         {
             "id": 105,
@@ -184,7 +185,8 @@ curl -s -X POST \
             "viewCount": 21,
             "praiseCount": 1,
             "isRecommend": 2,
-            "isPraise": 1
+            "isPraise": 1,
+            "url": "http://127.0.0.1:3000/article/1"
         }
     ],
     "ext": {
@@ -204,6 +206,7 @@ curl -s -X POST \
 - isRecommend : whether article is recommended
 - isPraise : whether article is praised
 - totalCount : total number of articles
+- url : article detail page's request url
 
 
 

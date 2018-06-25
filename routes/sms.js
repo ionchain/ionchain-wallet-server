@@ -71,9 +71,9 @@ function sendSms(mobile,code) {
     //验签参数
     let token = "123456";
     //短信通道编号
-    let channelNo = "1";
+    let channelNo = "2";
     //模板编号
-    let templateNo = "2";
+    let templateNo = "1";
 
     //身份认证
     let authorization = "Basic " +  utils.base64encode(new Buffer(account + ":" + password).toByteArray());
@@ -103,8 +103,6 @@ function sendSms(mobile,code) {
     requestParams.sign = utils.md5(sb.toString()).toUpperCase();
 
     return new Promise(( resolve, reject ) => {
-        resolve("ok");
-        return;
         client.post(method, requestParams, function (err, res, body) {
             if (!err && body.code === 0) {
                 console.log("短信发送成功! body=" + JSON.stringify(body));
