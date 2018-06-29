@@ -26,7 +26,7 @@ router.post("/article/findAll", (req, res) => {
     articleMapper.findAll(userId,(pageNo - 1) * pageSize, pageSize).then(rows=>{
         articleMapper.findCount().then(count=>{
             for(let i = 0 ; i < rows.length ; i ++){
-                rows[i].url = config.host+":"+config.port+"/article/"+rows[i].id;
+                rows[i].url = config.host+"/article/"+rows[i].id;
             }
             responseMessage.success(rows,"操作成功!",count[0]);
             return res.json(responseMessage);
@@ -147,6 +147,7 @@ router.get("/article/:id",function (req,res) {
             return res.render('404', { msg: '文章不存在!' });
         }
         row[0].createTime =dateUtils.dateDiff(row[0].createTime);
+        row[0].content = row[0].content.replace(/\/ionchain-cms-manager/g,'http://walletapi.ionchain.org');
         res.render('article/index', row[0]);
     }).catch(error=>{
         logger.error(error);
