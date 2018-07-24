@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <meta charset="utf-8"/>
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/src/lib/layer/layer.js"></script>
+    <script type="text/javascript" src="/js/clipboard.min.js"></script>
+    <script type="text/javascript" src="/js/jquery.qrcode.min.js"></script>
+    <script>
+        $(function () {
+            layer.msg("截屏分享给好友!");
+            var bindCopy = function (sel, suctitle) {
+                var clipboard = new Clipboard(sel, {
+                    text: function () {
+                        return $("#myInviteCode").text();
+                    }
+                });
+                clipboard.on('success', function (e) {
+                    layer.msg(suctitle);
+                });
+                clipboard.on('error', function (e) {
+                    layer.open({
+                        title: false,
+                        content: '<div style="text-align:left;word-break:break-all; width:100%; overflow:auto;margin:0 auto;">很抱歉，您当前浏览器不支持复制操作！<br/>请手动复制您的分享内容：' + shareConfig.content + '</div>',
+                        btn: []
+                    });
+                });
+            };
+            bindCopy("#myInviteCode", "邀请码复制成功!");
+            $("#qrCode").qrcode({
+                render: "canvas",    //设置渲染方式，有table和canvas，使用canvas方式渲染性能相对来说比较好
+                text: "https://www.ionchain.org",    //扫描二维码后显示的内容,可以直接填一个网址，扫描二维码后自动跳向该链接
+                width: "100",            // //二维码的宽度
+                height: "100",              //二维码的高度
+                background: "#ffffff",       //二维码的后景色
+                foreground: "#000000",        //二维码的前景色
+                src: '/image/logo.png',            //二维码中间的图片
+                typeNumber: -1,   //计算模式一般默认为-1
+                correctLevel: 2, //二维码纠错级别
+            });
+            $("body").on("click",function (event) {
+                if(!$(event.target).is($("#myInviteCode"))){
+                    var indexLayer = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(indexLayer);
+                }
+            })
+        })
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .wrap {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        body {
+            /*background-color: blueviolet;*/
+            background: url("/image/bg2.png") no-repeat;
+            background-size: 100% 100%;
+        }
+
+        header {
+            flex: 1;
+            height: 30%;
+            line-height: 100px;
+            text-align: center;
+            /*border-bottom: 1px solid #999;*/
+        }
+
+        footer {
+            flex: 1;
+            height: 40%;
+            line-height: 100px;
+            text-align: center;
+            /*border-top: 1px solid #999;*/
+        }
+
+        .main {
+            flex: 1;
+            /*position: relative;*/
+            line-height: 100px;
+            text-align: center;
+            /*width: 100%;*/
+            height: 30%;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header>
+        <img src="/image/logo@2x.png" style="padding-top: 50px;width: 100px;"/>
+        <p style="color: white;font-size: 30px;font-family: Arial;position:absolute;top: 18%;left: 39%">离子链</p>
+        <p align="center" style="color:white;font-size: 30px;padding-top: 0px;line-height: 95px">一起瓜分500万IONC</p>
+    </header>
+    <div class="main">
+        <div style=";padding: 30px;">
+            <p id="myInviteCode" data-clipboard-action="copy" style="font-size:40px;color:lawngreen;position:absolute;left:33%;top: 45%;"><%-inviteCode%></p>
+        </div>
+    </div>
+    <footer>
+        <p style="font-size: 15px;line-height:25px;color: white;margin: 0 auto;padding: 5px">我是离子链的第<span
+                    style="font-size: 20px;color: #009f95"><%-userId%></span>位居民，请和我<br>一起开启区块链星际旅途</p>
+        <div id='qrCode'
+             style="width: 110px;height: 110px;background-color: white;padding: 5px;border-radius: 8px;margin: 0 auto;">
+        </div>
+        <p style="font-size: 17px;color: white;margin-top: 0px;line-height: 25px;padding: 5px">扫描下载离子链APP</p>
+    </footer>
+</div>
+</body>
+</html>

@@ -25,7 +25,7 @@
                                 <div style="display:inline;float: left;"><%=author %></div><div style="display:inline;float:right"><%=createTime %></div>
                             </div>
                             <div class="mainContent">
-                                <div align="center" id="content"></div>
+                                <div><%-content%></div>
                             </div>
                         </div>
                     </div>
@@ -34,22 +34,4 @@
         </section>
     </div>
 </body>
-<script>
-//HTML标签转义（< -> &lt;）
-function html2Escape(sHtml) {
- return sHtml.replace(/[<>&"]/g,function(c){
-   return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];
- });
-};
-//HTML标签反转义（&lt; -> <）
-function escape2Html(str) {
-  var arrEntities={'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'};
-  return str.replace(/&(lt|gt|nbsp|amp|quot);/ig,function(all,t){
-    return arrEntities[t];
-  });
-}
-$(document).ready(function(){
-   $("#content").html(escape2Html('<%=content%>'));
-});
-</script>
 </html>

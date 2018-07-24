@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="/js/mui.min.js"></script>
+    <link href="/css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.12.1.min.js"></script>
+    <script type="text/javascript" src="/src/lib/layer/layer.js"></script>
+</head>
+<body class="body_bg">
+	<div class="main">
+		<div class="return">
+		<!--<img src="/image/return.png"/>-->
+	    </div>
+	<div class="hdgz">
+		<div class="f-c" id="rule">活动规则</div>
+	</div>
+	<!--邀请栏-->
+	<div class="generate">
+		<div><img src="/image/flow.png" alt="" /></div>
+		<div><span>分享给好友</span><span>好友下载</span><span>各赢得20<br>枚离子币</span></div>
+		<div class="f-15 f-c generate_click"><a>生成邀请函海报</a></div>
+		<!--<div class="f-15">复制邀请函链接</div>-->
+	</div>
+	<!--我的奖励-->
+	<div class="reward">
+		<div class="f-16 f-c">我的奖励</div>
+		<div><span id="myInviteReward">0</span><label class="f-c f-16">IONC</label></div>
+	</div>
+	<!--排行-->
+	<div class="rankings">
+		<div></div>
+		<div >
+			<div><img src="/image/rankings.png" alt="" /></div>
+			<div class="f-16 f-c">排行榜</div>
+		</div>
+		<div></div>
+	</div>
+	<div class="rankings_cont">
+		<ul class="cont_xinxi">
+		</ul>
+		<div class="cont_page">
+			<div id="preview">上一页</div>
+			<div id="next">下一页</div>
+		</div>
+	</div>
+	<div class="rankings">
+		<div></div>
+		<div>
+			<div class="f-16 f-cc">只显示前30位</div>
+		</div>
+		<div></div>
+	</div>
+
+	</div>
+	<!--弹框页面-->
+	<div class="ale_bg">
+		<div class="ale_cont">
+		<div><img src="/image/share-img.png"/></div>
+		<div class="ale_cont_cont">
+			<div>
+				<div>
+					<div class="img_wh"><img src="/image/weixin.png"/></div>
+					<div>微信好友</div>
+				</div>
+				<div>
+					<div class="img_wh"><img src="/image/pengyou.png"/></div>
+					<div>微信朋友</div>
+				</div>
+				<div>
+					<div class="img_wh"><img src="/image/jietu.png"/></div>
+					<div>保存截图</div>
+				</div>
+			</div>
+			<div class="f-15">取消</div>
+		</div>
+	</div>
+	</div>
+<script type="text/javascript" charset="utf-8">
+	$(function() {
+		var pageNo = 1;
+		var pageSize = 5;
+		var totalCount = 100000;
+		function getRating(){
+			var params = {};
+			params.pageNo = pageNo;
+			params.pageSize = pageSize;
+			$.ajax({
+				type: "POST",
+				url: "/inviteRecord/rating",
+				data: params,
+				success: function (data) {
+					var html = "";
+					totalCount = data.ext.totalCount;
+					if (data.data && data.data.length > 0) {
+						var seriNo = (pageNo - 1) * pageSize + 1;
+						for (var i = 0; i < data.data.length; i++) {
+							html += '<li>';
+							html += ('<div><span>' + (seriNo + i) + '</span><label>' + data.data[i].tel + '</label></div>');
+							html += '<div><span>'+data.data[i].amount+'</span><label>IONC</label></div>';
+							html += '</li>';
+						}
+					}
+					$(".cont_xinxi").empty();
+					$(".cont_xinxi").html(html);
+				}
+			});
+		}
+		function getTotalInviteReward(userId){
+			if(!userId){
+				$("#myInviteReward").html(0);
+				return;
+			}
+			var params = {};
+			params.inviteCode = userId;
+			$.ajax({
+				type: "POST",
+				url: "/inviteRecord/findAll",
+				data: params,
+				success: function (data) {
+					$("#myInviteReward").html(data.ext.totalCount * 80);
+				}
+			});
+		}
+		$("#preview").click(function () {
+			if( (pageNo-1) < 1 ){
+				return;
+			}
+			pageNo -= 1;
+			getRating();
+		});
+		$("#next").click(function () {
+			if((pageNo + 1) > 5 || pageNo * pageSize > totalCount){
+				return;
+			}
+			pageNo += 1;
+			getRating();
+		});
+		$(".generate_click").click(function(){
+			var addOrder2 = ['100%','100%'];
+			var content = "/share/detail/"+'<%-inviteCode%>'+"/"+'<%-userId%>';
+			var index2 = layer.open({
+				 type: 2,
+				 title: false,
+				 shade: [0],
+				 closeBtn:0,
+				 area: addOrder2,
+				 content: [content,"yes"]
+			});
+			layer.iframeAuto(index2);
+		})
+		$("#rule").click(function(){
+			var addOrder2 = ['100%','100%'];
+			var content = "/share/rule";
+			var index2 = layer.open({
+				type: 2,
+				title: false,
+				shade: [0],
+				closeBtn:0,
+				area: addOrder2,
+				content: [content,"yes"]
+			});
+			layer.iframeAuto(index2);
+		})
+
+		getRating();
+		getTotalInviteReward('<%-inviteCode%>');
+	});
+</script>
+</body>
+</html>

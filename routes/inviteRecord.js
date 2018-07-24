@@ -39,4 +39,30 @@ router.post("/inviteRecord/findAll", (req, res) => {
     })
 });
 
+/**
+ * Find invite rating
+ * @param {int} pageNo (default 1)
+ * @param {int} pageSize (default 10)
+ * @return {object}
+ */
+router.post("/inviteRecord/rating", (req, res) => {
+    let pageNo = parseInt(req.body.pageNo) || 1;
+    let pageSize = parseInt(req.body.pageSize) || 10;
+    let responseMessage = new ResponseMessage();
+    inviteRecordMapper.findAll((pageNo - 1) * pageSize, pageSize).then(rows=>{
+        inviteRecordMapper.findCount().then(count=>{
+            responseMessage.success(rows,"操作成功!",count[0]);
+            return res.json(responseMessage);
+        }).catch(error=>{
+            logger.error(error);
+            responseMessage.exception(Status.EXCEPTION_QUERY);
+            return res.json(responseMessage);
+        })
+    }).catch(error=>{
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
+        return res.json(responseMessage);
+    })
+});
+
 module.exports = router;

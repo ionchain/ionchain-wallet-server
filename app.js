@@ -18,18 +18,22 @@ let sms = require('./routes/sms');
 let sys = require('./routes/sys');
 let inviteRecord  = require("./routes/inviteRecord");
 let coinRecord = require("./routes/coinRecord");
-let random = require("./utils/inviteCode");
+let inviteCodeUtil = require("./utils/inviteCode");
+let share = require("./routes/share");
 
 //初始化方法
 function init(){
     //加载邀请码到redis缓存
-    random.loadInviteCodes();
+    inviteCodeUtil.loadInviteCodes();
 }
 init();
 
 var signature = require('./models/SignatureVerfy');
 
 var app = express();
+let cors = require('cors');
+
+app.use(cors());
 
 app.all('/*', function(request, response, next){
     //开启签名验证
@@ -65,6 +69,7 @@ app.use("/",sms);
 app.use("/",sys);
 app.use("/",inviteRecord);
 app.use("/",coinRecord);
+app.use("/",share);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -78,8 +83,9 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(err.status || 404);
+  res.render('404', {msg: 'SORRY!您访问的页面出错了...'});
+
 });
 
 app.listen(3000,function () {

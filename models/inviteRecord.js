@@ -21,11 +21,30 @@ exports.findByInviteCode = function (inviteCode,limit,offset) {
 };
 
 /**
- * Find total count
+ * Find total count through inviteCode
  * @param {string} inviteCode
  * @return {Promise}
  */
 exports.findCountByInviteCode = function (inviteCode) {
     return pool.query("select count(id) as totalCount from tb_invite_record WHERE invitecode = ? ",[inviteCode]);
+};
+
+/**
+ * Find inviting rating
+ * @param {int} limit
+ * @param {int} offset
+ * @returns {Promise}
+ */
+exports.findAll = function (limit,offset) {
+    return pool.query("SELECT (SELECT tel from sys_user where invite_code = a.invitecode) as tel,count(*) * 80 as amount FROM tb_invite_record a " +
+        "GROUP BY a.invitecode ORDER BY amount desc LIMIT ?,?",[limit,offset]);
+};
+
+/**
+ * Find total inviteCode count
+ * @return {Promise}
+ */
+exports.findCount = function(){
+    return pool.query("SELECT COUNT(distinct invitecode) as totalCount FROM tb_invite_record");
 };
 
