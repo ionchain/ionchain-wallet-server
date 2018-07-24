@@ -82,8 +82,9 @@
 <script type="text/javascript" charset="utf-8">
 	$(function() {
 		var pageNo = 1;
-		var pageSize = 5;
+		var pageSize = 2;
 		var totalCount = 100000;
+		var maxDisplay = 60;
 		function getRating(){
 			var params = {};
 			params.pageNo = pageNo;
@@ -98,6 +99,9 @@
 					if (data.data && data.data.length > 0) {
 						var seriNo = (pageNo - 1) * pageSize + 1;
 						for (var i = 0; i < data.data.length; i++) {
+						    if(seriNo +i > maxDisplay){
+						        break;
+							}
 							html += '<li>';
 							html += ('<div><span>' + (seriNo + i) + '</span><label>' + data.data[i].tel + '</label></div>');
 							html += '<div><span>'+data.data[i].amount+'</span><label>IONC</label></div>';
@@ -118,10 +122,10 @@
 			params.inviteCode = userId;
 			$.ajax({
 				type: "POST",
-				url: "/inviteRecord/findAll",
+				url: "/inviteRecord/myInviteRewardAmount",
 				data: params,
 				success: function (data) {
-					$("#myInviteReward").html(data.ext.totalCount * 80);
+					$("#myInviteReward").html(data.data);
 				}
 			});
 		}
@@ -133,7 +137,7 @@
 			getRating();
 		});
 		$("#next").click(function () {
-			if((pageNo + 1) > 5 || pageNo * pageSize > totalCount){
+			if(pageNo * pageSize >= totalCount || pageNo * pageSize >= maxDisplay){
 				return;
 			}
 			pageNo += 1;

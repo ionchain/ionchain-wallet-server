@@ -36,7 +36,7 @@ exports.findCountByInviteCode = function (inviteCode) {
  * @returns {Promise}
  */
 exports.findAll = function (limit,offset) {
-    return pool.query("SELECT (SELECT tel from sys_user where invite_code = a.invitecode) as tel,count(*) * 80 as amount FROM tb_invite_record a " +
+    return pool.query("SELECT (SELECT tel from sys_user where invite_code = a.invitecode) as tel,count(*) as amount FROM tb_invite_record a " +
         "GROUP BY a.invitecode ORDER BY amount desc LIMIT ?,?",[limit,offset]);
 };
 
