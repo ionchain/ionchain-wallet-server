@@ -6,6 +6,7 @@ let log4js = require('log4js');
 log4js.configure('config/log4j.json');
 let logger = log4js.getLogger("article");
 let utils = require("utility");
+let rewards = require("../utils/constants").REWARDS;
 
 /**
  * Queue for saving coinDetail
@@ -34,12 +35,12 @@ let inviteRewardQueue = new Queue(async function (userInvite, cb) {
             return;
         }
         let inviter = rows[0];
-        await userMapper.updateIonCoin(inviter.userid, 100);
+        await userMapper.updateIonCoin(inviter.userid, rewards.invite.amount);
         await userInviteMapper.save(userInvite);
         let coinDetail = {};
         coinDetail.userid = inviter.userid;
-        coinDetail.type = 2;
-        coinDetail.amount = 100;
+        coinDetail.type = rewards.invite.type;
+        coinDetail.amount = rewards.invite.amount;
         coinDetail.create_time = utils.YYYYMMDDHHmmss();
         coinDetailQueue.push(coinDetail);
         cb(null,"success");
@@ -55,11 +56,11 @@ let inviteRewardQueue = new Queue(async function (userInvite, cb) {
  */
 let registerRewardQueue = new Queue(async function (userId, cb) {
     try{
-        await userMapper.updateIonCoin(userId,30);
+        await userMapper.updateIonCoin(userId,rewards.register.amount);
         let coinDetail = {};
         coinDetail.userid = userId;
-        coinDetail.type = 1;
-        coinDetail.amount = 30;
+        coinDetail.type = rewards.register.type;
+        coinDetail.amount = rewards.register.amount;
         coinDetail.create_time = utils.YYYYMMDDHHmmss();
         coinDetailQueue.push(coinDetail);
         cb(null,"success");
