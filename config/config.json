@@ -1,6 +1,6 @@
 {
   "contractAddress":"0x92e831bbbb22424e0f22eebb8beb126366fa07ce",
-  "port":"3000",
+  "port":"3001",
   "providerUrl":"https://ropsten.infura.io",
   "host":"http://127.0.0.1",
   "appId":"wxe290ce212a2f8a97",

@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 
 var connection = mysql.createPool({
-    host:'127.0.0.1',
+    host:'192.168.23.149',
     user:'root',
     password:'root',
     database:'jfinal_cms'

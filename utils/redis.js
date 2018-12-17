@@ -1,6 +1,6 @@
 let redis = require("redis");
 let redisClient = redis.createClient({
-    "host":"127.0.0.1",
+    "host":"192.168.23.164",
     "port":"6379"
 });
 module.exports = redisClient;

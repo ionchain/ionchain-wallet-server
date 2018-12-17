@@ -20,6 +20,7 @@ let inviteRecord  = require("./routes/inviteRecord");
 let coinRecord = require("./routes/coinRecord");
 let inviteCodeUtil = require("./utils/inviteCode");
 let share = require("./routes/share");
+let mall = require("./routes/appApplicationMall");
 
 //初始化方法
 function init(){
@@ -62,6 +63,7 @@ app.use('/tasks',tasks);
 app.use('/sms',walletSms);
 app.use('/token',walletToken);
 app.use('/news', News);
+app.use('/mall',mall);
 app.use('/', article);
 app.use('/jflyfox/bbs/ueditor/image', image);
 app.use('/',user);
@@ -86,10 +88,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 404);
   res.render('404', {msg: 'SORRY!您访问的页面出错了...'});
 
-});
-
-app.listen(3000,function () {
-    console.log("app listen on 3000");
 });
 
 module.exports = app;

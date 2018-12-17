@@ -5,7 +5,7 @@ var WalletSms = require('../models/walletSms');
 var ResponseMessage = require('../models/ResponseMessage');
 var STATUS = require('../models/Status');
 
-router.get('/:id?', function(req, res, next){
+router.get('/:id?', function(req, res, next) {
     if(req.params.id){
         WalletSms.getWalletSmsById(req.params.id, function (err, rows) {
             var responseMessage = new ResponseMessage();
