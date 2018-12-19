@@ -56,6 +56,7 @@ router.get('/:id?', function(req, res, next){
     }
 });
 
+
 //新增应用
 router.post('/', function(req, res, next){
 
@@ -78,7 +79,6 @@ router.post('/', function(req, res, next){
 
 //更新应用
 router.put('/:id', function(req, res, next){
-
     var responseMessage = new ResponseMessage();
     mall.updateMallApp(req.params.id, req.body, function(err, result){
         if(err)
