@@ -8,7 +8,6 @@ var fs = require("fs");
 
 //新增应用
 router.post('/', function (req, res, next) {
-
     var responseMessage = new ResponseMessage();
     console.log(req.files);
     // 传多张
@@ -25,8 +24,8 @@ router.post('/', function (req, res, next) {
         } else {
             res.send(`第${i}图片上传成功`);
         }
-
     }
+    responseMessage.success(req.files, null);
 });
 
 
