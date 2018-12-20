@@ -21,6 +21,7 @@ let coinRecord = require("./routes/coinRecord");
 let inviteCodeUtil = require("./utils/inviteCode");
 let share = require("./routes/share");
 let mall = require("./routes/appApplicationMall");
+let screen = require("./routes/appScreenshot");
 
 //初始化方法
 function init(){
@@ -64,6 +65,7 @@ app.use('/sms',walletSms);
 app.use('/token',walletToken);
 app.use('/news', News);
 app.use('/mall',mall);
+app.use('/screen',screen);
 app.use('/', article);
 app.use('/jflyfox/bbs/ueditor/image', image);
 app.use('/',user);
