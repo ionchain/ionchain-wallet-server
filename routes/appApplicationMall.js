@@ -172,5 +172,22 @@ router.post('/:mallId', upload.any(), function(req, res, next){
     });
 });
 
+//截图预览
+router.get('/image/:id', function(req, res, next){
+    var responseMessage = new ResponseMessage();
+    // console.info(req.params.id);
+    mall.getMallAppById(req.params.id,function(err, rows){
+        if(err)
+        {
+            responseMessage.exception(STATUS.EXCEPTION_ADD, err);
+        }
+        else
+        {
+            var des_dir = config.imageUploadDir + rows[0].logo_url;
+            res.sendFile(des_dir);
+        }
+    });
+});
+
 
 module.exports = router;
