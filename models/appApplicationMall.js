@@ -57,7 +57,13 @@ var MallApp = {
         return db.query("" +
             " update app_application_mall " +
             " set status = ?" +
-            " where id = ?", [status,id], callback);
+            " where id = ?", [status, id], callback);
+    },
+    updateLogo: function (id, url, callback) {
+        return db.query("" +
+            " update app_application_mall " +
+            " set logo_url = ?" +
+            " where id = ?", [url, id], callback);
     }
 };
 

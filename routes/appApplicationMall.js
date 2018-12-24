@@ -3,11 +3,19 @@ var router = express.Router();
 
 var mall = require('../models/appApplicationMall');
 var screen = require('../models/appScreenShot');
+var moment = require('moment');
 
 
 var PagingInfo = require('../models/PagingInfo');
 var ResponseMessage = require('../models/ResponseMessage');
 var STATUS = require('../models/Status');
+var fs = require("fs");
+var multer  = require('multer');
+var upload = multer({dest: 'upload_tmp/'});
+var config = require('../config/config');
+
+var mkdirp = require('mkdirp');
+var path = require('path');  /*nodejs自带的模块*/
 
 //查询方法
 router.get('/:id?', function(req, res, next){
@@ -116,6 +124,51 @@ router.put('/:id/:status', function(req, res, next){
             responseMessage.success(result, null);
         }
         res.json(responseMessage);
+    });
+});
+
+
+//logo上传
+router.post('/:mallId', upload.any(), function(req, res, next){
+    var mallId = req.params.mallId;
+    var responseMessage = new ResponseMessage();
+    var nowTime = moment().format('YYYYMMDDhhmmss');
+    var des_sys_dir = nowTime + "/" + mallId + "/";
+    //保存目录
+    var des_dir = config.imageUploadDir + des_sys_dir;
+    //不存在此目录，创建此目录
+    if(!fs.existsSync(des_dir)){
+        mkdirp.sync(des_dir, function (err) {
+            if (err) {
+                console.error(err);
+            } else {
+                console.log('pow!');
+            }
+        });
+    }
+    var originalname = req.files[0].originalname;
+    var extname=path.extname(originalname);	 //获取文件的后缀名
+    var sysname = mallId+"-logo"+extname
+    var des_file = des_dir + sysname;
+    var relative_file = des_sys_dir + sysname;
+    fs.readFile(req.files[0].path, function (err, data) {
+        fs.writeFile(des_file, data, function (err) {
+            if(err){
+                console.log( err );
+                responseMessage.exception(STATUS.EXCEPTION_ADD,"上传失败，请检查并重新上传！");
+            }
+            mall.updateLogo(mallId, relative_file, function(err, result){
+                if(err)
+                {
+                    responseMessage.exception(STATUS.EXCEPTION_ADD, err);
+                }
+                else
+                {
+                    responseMessage.success(result, null);
+                }
+                res.json(responseMessage);
+            });
+        });
     });
 });
 
