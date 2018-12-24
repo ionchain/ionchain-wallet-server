@@ -10,7 +10,7 @@ var MallApp = {
             " FROM app_application_mall t ",callback);
     },
     getAllMallApp: function (num, offset, callback) {
-        return db.query("select * from app_application_mall limit ? offset ?", [num, offset], callback);
+        return db.query("select * from app_application_mall where status = 1 limit ? offset ?", [num, offset], callback);
     },
     getMallAppById: function (id, callback) {
         return db.query("" +
@@ -51,6 +51,13 @@ var MallApp = {
             "   logo_url = ?,app_url = ?,app_score = ?,package_name = ?,app_id = ?,owner = ?,sorted_number = ?" +
             " where id = ?", [MallApp.name, MallApp.type, MallApp.introduction, MallApp.version, currentTime,
             MallApp.logo_url, MallApp.app_url, MallApp.app_score,MallApp.package_name, MallApp.appId,MallApp.owner, MallApp.sorted_number,id], callback);
+    },
+    updateStatus: function (id, status, callback) {
+        var currentTime = moment().format('YYYY-MM-DD hh:mm:ss');
+        return db.query("" +
+            " update app_application_mall " +
+            " set status = ?" +
+            " where id = ?", [status,id], callback);
     }
 };
 

@@ -17,8 +17,7 @@ router.get('/:id?', function(req, res, next){
             if(err && rows.size!=1) {
                 responseMessage.exception(STATUS.EXCEPTION_QUERY,null);
             } else {
-                console.info(rows[0]);
-                screen.findByMallId(req.params.id, function (err, screens) {
+                screen.findByMallId(req.params.id, 1, function (err, screens) {
                     var result = {};
                     result.mall = rows[0];
                     result.screens = screens;
@@ -90,6 +89,24 @@ router.post('/', function(req, res, next){
 router.put('/:id', function(req, res, next){
     var responseMessage = new ResponseMessage();
     mall.updateMallApp(req.params.id, req.body, function(err, result){
+        if(err)
+        {
+            responseMessage.exception(STATUS.EXCEPTION_ADD, err);
+        }
+        else
+        {
+            responseMessage.success(result, null);
+        }
+        res.json(responseMessage);
+    });
+});
+
+//应用启停
+router.put('/:id/:status', function(req, res, next){
+    var responseMessage = new ResponseMessage();
+    var id = req.params.id;
+    var status = req.params.status;
+    mall.updateStatus(id, status, function(err, result){
         if(err)
         {
             responseMessage.exception(STATUS.EXCEPTION_ADD, err);

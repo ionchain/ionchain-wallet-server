@@ -14,11 +14,14 @@ var Screen = {
         console.info(data);
         return data;
     },
-    findById: function (id, callback) {
+    findById: function (id, status, callback) {
         return db.query("select * from app_screenshot where id = ?", [id], callback);
     },
-    findByMallId: function (mallId, callback) {
-        return db.query("select * from app_screenshot where app_mall_id = ?", [mallId], callback);
+    findByMallId: function (mallId, status, callback) {
+        return db.query("select * from app_screenshot where app_mall_id = ? and status = ?", [mallId, status], callback);
+    },
+    updateStatus: function (id, status, callback) {
+        return db.query("update app_screenshot set status = ? where id = ?", [status, id], callback);
     }
 };
 

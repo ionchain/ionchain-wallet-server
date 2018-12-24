@@ -65,7 +65,7 @@ router.post('/:id?', upload.any(), function(req, res, next) {
     res.json(responseMessage);
 });
 
-//更新应用
+//截图预览
 router.get('/:id', function(req, res, next){
     var responseMessage = new ResponseMessage();
     screen.findById(req.params.id,function(err, rows){
@@ -77,6 +77,22 @@ router.get('/:id', function(req, res, next){
         {
             var des_dir = config.imageUploadDir + rows[0].url + rows[0].sys_name;
             res.sendFile(des_dir);
+        }
+    });
+});
+
+//截图删除
+router.delete('/:id', function(req, res, next){
+    var responseMessage = new ResponseMessage();
+    screen.updateStatus(req.params.id, 0 ,function(err, rows){
+        if(err)
+        {
+            responseMessage.exception(STATUS.EXCEPTION_ADD, err);
+        }
+        else
+        {
+            responseMessage.success();
+            res.json(responseMessage);
         }
     });
 });
