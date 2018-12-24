@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 
 var mall = require('../models/appApplicationMall');
+var screen = require('../models/appScreenShot');
+
+
 var PagingInfo = require('../models/PagingInfo');
 var ResponseMessage = require('../models/ResponseMessage');
 var STATUS = require('../models/Status');
@@ -14,9 +17,15 @@ router.get('/:id?', function(req, res, next){
             if(err && rows.size!=1) {
                 responseMessage.exception(STATUS.EXCEPTION_QUERY,null);
             } else {
-                responseMessage.success(rows[0],null);
+                console.info(rows[0]);
+                screen.findByMallId(req.params.id, function (err, screens) {
+                    var result = {};
+                    result.mall = rows[0];
+                    result.screens = screens;
+                    responseMessage.success(result,null);
+                    res.json(responseMessage);
+                });
             }
-            res.json(responseMessage);
         });
     } else {
         var pagingInfo = new PagingInfo();

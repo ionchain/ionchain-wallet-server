@@ -61,9 +61,24 @@ router.post('/:id?', upload.any(), function(req, res, next) {
     screen.batchInsert(txBatchArray, function (error, result) {
         console.log("批量插入交易： " + error);
     });
-    console.info(result);
     responseMessage.success(txBatchArray,null);
     res.json(responseMessage);
+});
+
+//更新应用
+router.get('/:id', function(req, res, next){
+    var responseMessage = new ResponseMessage();
+    screen.findById(req.params.id,function(err, rows){
+        if(err)
+        {
+            responseMessage.exception(STATUS.EXCEPTION_ADD, err);
+        }
+        else
+        {
+            var des_dir = config.imageUploadDir + rows[0].url + rows[0].sys_name;
+            res.sendFile(des_dir);
+        }
+    });
 });
 
 
