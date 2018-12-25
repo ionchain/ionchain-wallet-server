@@ -10,7 +10,7 @@ var MallApp = {
             " FROM app_application_mall t ",callback);
     },
     getAllMallApp: function (num, offset, callback) {
-        return db.query("select * from app_application_mall where status = 1 limit ? offset ?", [num, offset], callback);
+        return db.query("select * from app_application_mall where status = 1 order by sorted_number asc limit ? offset ?", [num, offset], callback);
     },
     getMallAppById: function (id, callback) {
         return db.query("" +
