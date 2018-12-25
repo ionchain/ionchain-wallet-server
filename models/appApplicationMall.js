@@ -30,10 +30,10 @@ var MallApp = {
             "insert into " +
                 "app_application_mall" +
                     "(id, name, type, introduction, version, update_time, create_time," +
-                        "logo_url, app_url, app_score, package_name, app_id, owner, sorted_number) " +
-            " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                        "logo_url, app_url, app_score, package_name, app_id, owner, sorted_number,status) " +
+            " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     [uuid.v1(), MallApp.name, MallApp.type, MallApp.introduction, MallApp.version, currentTime, currentTime,
-                        MallApp.logo_url, MallApp.app_url, MallApp.app_score,MallApp.package_name, MallApp.app_id,MallApp.owner, MallApp.sorted_number],
+                        MallApp.logo_url, MallApp.app_url, MallApp.app_score,MallApp.package_name, MallApp.app_id,MallApp.owner, MallApp.sorted_number,MallApp.status],
             callback);
         return data;
     },
