@@ -68,6 +68,7 @@ router.post('/:id?', upload.any(), function(req, res, next) {
 //截图预览
 router.get('/:id', function(req, res, next){
     var responseMessage = new ResponseMessage();
+    console.info(req.params.id);
     screen.findById(req.params.id,function(err, rows){
         if(err)
         {

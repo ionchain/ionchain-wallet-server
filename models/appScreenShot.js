@@ -14,7 +14,7 @@ var Screen = {
         console.info(data);
         return data;
     },
-    findById: function (id, status, callback) {
+    findById: function (id, callback) {
         return db.query("select * from app_screenshot where id = ?", [id], callback);
     },
     findByMallId: function (mallId, status, callback) {
