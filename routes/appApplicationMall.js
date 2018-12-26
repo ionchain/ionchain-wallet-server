@@ -157,6 +157,8 @@ router.post('/:mallId', upload.any(), function(req, res, next){
                 console.log( err );
                 responseMessage.exception(STATUS.EXCEPTION_ADD,"上传失败，请检查并重新上传！");
             }
+            // console.info(mallId);
+            // console.info(relative_file);
             mall.updateLogo(mallId, relative_file, function(err, result){
                 if(err)
                 {
@@ -177,6 +179,9 @@ router.get('/image/:id', function(req, res, next){
     var responseMessage = new ResponseMessage();
     // console.info(req.params.id);
     mall.getMallAppById(req.params.id,function(err, rows){
+        // console.info(req.params.id);
+        // console.info(err);
+        // console.info(rows);
         if(err)
         {
             responseMessage.exception(STATUS.EXCEPTION_ADD, err);
