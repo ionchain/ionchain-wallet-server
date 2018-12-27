@@ -25,7 +25,8 @@ router.get('/:id?', function(req, res, next){
             if(err && rows.size!=1) {
                 responseMessage.exception(STATUS.EXCEPTION_QUERY,null);
             } else {
-                screen.findByMallId(req.params.id, 1, function (err, screens) {
+                console.info(rows);
+                screen.findByMallId(req.params.id, '1', function (err, screens) {
                     var result = {};
                     result.mall = rows[0];
                     result.screens = screens;

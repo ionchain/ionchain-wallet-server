@@ -32,12 +32,12 @@ router.post('/:id?', upload.any(), function(req, res, next) {
     }
     var txBatchArray = [];
     for(var i = 0;i<req.files.length;i++){
+        var txArray = [];
         var originalname = req.files[i].originalname;
         var extname=path.extname(originalname);	 //获取文件的后缀名
         var sysname = mallId+"-"+(i+1)+extname
         var des_file = des_dir + sysname;
         var size = req.files[i].size;
-        var txArray = [];
         //id, url, name, sys_name, size, create_time,update_time,status,app_mall_id
         txArray.push(uuid.v1());
         txArray.push(des_sys_dir);
@@ -56,8 +56,9 @@ router.post('/:id?', upload.any(), function(req, res, next) {
                 }
             });
         });
+        txBatchArray.push(txArray);
     }
-    txBatchArray.push(txArray);
+    // console.info(txBatchArray);
     screen.batchInsert(txBatchArray, function (error, result) {
         console.log("批量插入交易： " + error);
     });

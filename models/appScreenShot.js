@@ -11,7 +11,7 @@ var Screen = {
                 values
             ],
             callback);
-        console.info(data);
+        // console.info(data);
         return data;
     },
     findById: function (id, callback) {
