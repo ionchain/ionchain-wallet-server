@@ -11,9 +11,22 @@ let logger = log4js.getLogger("user");
  * Find version info
  * @return {object}
  */
-router.get("/info",function (req,res) {
+router.get("/",function (req,res) {
     let responseMessage = new ResponseMessage();
     version.getVersionInfo().then(rows=>{
+        responseMessage.success(rows);
+        res.json(responseMessage);
+    }).catch(error=>{
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
+        res.json(responseMessage);
+    })
+});
+
+//更新应用
+router.put('/:id', function(req, res, next){
+    let responseMessage = new ResponseMessage();
+    version.updateVersionInfo(req.params.id, req.body).then(rows=>{
         responseMessage.success(rows);
         res.json(responseMessage);
     }).catch(error=>{
