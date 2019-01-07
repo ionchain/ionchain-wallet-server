@@ -22,6 +22,8 @@ let inviteCodeUtil = require("./utils/inviteCode");
 let share = require("./routes/share");
 let mall = require("./routes/appApplicationMall");
 let screen = require("./routes/appScreenshot");
+let version = require('./routes/version');
+
 
 //初始化方法
 function init(){
@@ -74,6 +76,7 @@ app.use("/",sys);
 app.use("/",inviteRecord);
 app.use("/",coinRecord);
 app.use("/",share);
+app.use("/version",version);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
