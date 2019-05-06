@@ -38,6 +38,7 @@ router.get("/user/:tel", (req, res) => {
 router.post("/user/login", (req, res) => {
     let tel = req.body.tel;
     let password = req.body.password;
+    console.info(tel);
     let responseMessage = new ResponseMessage();
     userMapper.findByTelAndPassword(tel,utils.md5(password)).then(rows=>{
         if(rows && rows.length === 1){
