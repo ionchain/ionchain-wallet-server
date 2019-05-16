@@ -23,6 +23,20 @@ router.get("/",function (req,res) {
     })
 });
 
+
+
+router.get("/node",function (req,res) {
+    let responseMessage = new ResponseMessage();
+    version.getNodeInfo().then(rows=>{
+        responseMessage.success(rows);
+        res.json(responseMessage);
+    }).catch(error=>{
+        logger.error(error);
+        responseMessage.exception(Status.EXCEPTION_QUERY);
+        res.json(responseMessage);
+    })
+});
+
 //更新应用
 router.put('/:id', function(req, res, next){
     let responseMessage = new ResponseMessage();

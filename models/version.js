@@ -11,6 +11,12 @@ exports.getVersionInfo = function() {
 };
 
 
+exports.getNodeInfo = function() {
+    let sql = "SELECT ionc_node FROM app_version_info limit 1";
+    return pool.query(sql)
+};
+
+
 
 exports.updateVersionInfo = function (id, version) {
     let sql = "update app_version_info " +
