@@ -9,6 +9,8 @@ ionchain wallet server
 - [InviteRecord](#inviterecord)
 - [CoinRecord](#coinrecord)
 - [VersionInfo](#versioninfo)
+- [VersionIoncNode](#Versionioncnode)
+
 
 
 ## Tools
@@ -403,6 +405,32 @@ curl -s -X POST \
 - update_info : update_info
 - url : download url
 - language : 1:English; 0 :Chinese;
+- ionc_node : http:xxx.xxx.xxx:8545;
+- amount : amount
+
+
+
+## VersionIoncNode
+### get wallet's VersionIoncNode
+```
+curl -s -X POST \
+  http://127.0.0.1:3000/version/node \
+  -H "content-type: application/json"
+```
+##### Response:
+ ```
+{
+    "code": 0,
+    "msg": "操作成功!",
+    "data": [
+        {
+            "ionc_node": "xxx-test"
+        }
+    ]
+}
+ ```
+- code : 0 means success, other representatives fail
+- msg : explanation of code
 - ionc_node : http:xxx.xxx.xxx:8545;
 - amount : amount
  
