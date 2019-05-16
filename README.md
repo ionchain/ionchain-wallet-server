@@ -8,6 +8,8 @@ ionchain wallet server
 - [Article](#article)
 - [InviteRecord](#inviterecord)
 - [CoinRecord](#coinrecord)
+- [VersionInfo](#versioninfo)
+
 
 ## Tools
 ### Send SMS
@@ -347,11 +349,61 @@ curl -s -X POST \
     }
 }
  ```
-- code : 0 means success, other representatives fail 
+- code : 0 means success, other representatives fail
 - msg : explanation of code
 - userId : user's Id
 - createTime : record's createTime
 - type : 1 means register,2 means invite user ,3 means sign
+- amount : amount
+
+## VersionInfo
+### get wallet's versioninfo
+```
+curl -s -X POST \
+  http://127.0.0.1:3000/version \
+  -H "content-type: application/json"
+```
+##### Response:
+ ```
+{
+    "code": 0,
+    "msg": "操作成功!",
+    "data": [
+        {
+            "id": "1",
+            "has_new_version": "1",
+            "must_update": "1",
+            "version_number": "102",
+            "version_code": 1,
+            "update_info": "Version:v_1.0.0-alpha&&Content:&&1.Added according to the system language Settings to switch between Chinese and English. &&2.Optimizes the prompts given to users when they are not connected to the main network. &&3.New version information, automatic update and manual update function in App. Item n add IONC and RMB value relationship.&&",
+            "url": "http://www.blockchainbrother.com/css/default/app-ionchain-release.apk",
+            "language": "1",
+            "ionc_node": "xxx-test"
+        },
+        {
+            "id": "1a1f18d6faf0fasdfas",
+            "has_new_version": "1",
+            "must_update": "0",
+            "version_number": "1.0.2",
+            "version_code": 104,
+            "update_info": "最新版本:v_1.0.0-alpha&&更新内容:&&1.新增根据系统的语言设置切换中英文。 &&2.优化连接不上主网的时候给用户的提示。&&3.新增版本信息，自动更新和App里手动更新的功能。&&4.新增IONC和RMB价值关系&",
+            "url": "http://www.blockchainbrother.com/css/default/app-ionchain-release.apk",
+            "language": "0",
+            "ionc_node": "555555555555555555"
+        }
+    ]
+}
+ ```
+- code : 0 means success, other representatives fail
+- msg : explanation of code
+- has_new_version : has_new_version
+- must_update: 1 yes; 0 no;
+- version_number : version number
+- version_code : version code
+- update_info : update_info
+- url : download url
+- language : 1:English; 0 :Chinese;
+- ionc_node : http:xxx.xxx.xxx:8545;
 - amount : amount
  
  
