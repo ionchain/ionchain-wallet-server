@@ -1,6 +1,9 @@
 # ionchain-wallet-server
 ionchain wallet server
 
+## deploy
+pm2 start bin/www --name='ionchain-wallet-server'
+
 ## Modules
 - [Tools](#tools)
 - [User](#user)
